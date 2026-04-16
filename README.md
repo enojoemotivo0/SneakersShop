@@ -1,7 +1,7 @@
-# Propuesta de Proyecto Final - TiendaNiche
+# Propuesta de Proyecto Final - SneakersShop
 
 ## 1. Descripción General
-**TiendaNiche** es una plataforma de comercio electrónico especializada (café premium, accesorios, etc.) desarrollada como proyecto final de ciclo. La aplicación permite a los usuarios navegar por un catálogo de productos y a los administradores gestionar el inventario.
+**SneakersShop** es una plataforma de comercio electrónico especializada (café premium, accesorios, etc.) desarrollada como proyecto final de ciclo. La aplicación permite a los usuarios navegar por un catálogo de productos y a los administradores gestionar el inventario.
 
 ## 2. Tecnologías Utilizadas
 - **Backend**: Java 17, Spring Boot 3.2, Spring Data JPA, Spring MVC.
