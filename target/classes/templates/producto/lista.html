@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head}"></head>
+<body>
+    <header th:replace="~{fragments/nav :: nav}"></header>
+
+    <div class="page-header">
+        <div class="container">
+            <h1><i class="bi bi-box-seam me-2"></i>Inventario</h1>
+            <p class="subtitle">Gestión completa de productos</p>
+        </div>
+    </div>
+
+    <main class="container" style="padding-bottom:60px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+            <!-- Search -->
+            <form th:action="@{/productos}" method="get" style="display:flex; gap:8px; flex:1; max-width:420px;">
+                <input type="text" name="buscar" class="field-input" style="flex:1;"
+                       placeholder="Buscar por nombre..." th:value="${buscar}">
+                <button type="submit" class="btn-ghost" style="padding:9px 16px; font-size:0.72rem; white-space:nowrap;">
+                    <i class="bi bi-search"></i> Buscar
+                </button>
+                <a th:if="${buscar != null}" th:href="@{/productos}" class="btn-ghost" style="padding:9px 14px; font-size:0.72rem; white-space:nowrap; border-color:var(--mid); color:var(--mid);">
+                    <i class="bi bi-x"></i>
+                </a>
+            </form>
+            <a href="/productos/nuevo" class="btn-ink" style="white-space:nowrap;">
+                <i class="bi bi-plus-lg"></i> Nuevo Producto
+            </a>
+        </div>
+
+        <div style="background:#fff; border:1.5px solid var(--border); border-radius:4px; overflow:hidden;">
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Precio</th>
+                            <th>Stock</th>
+                            <th>Categoría</th>
+                            <th>Talla</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="producto : ${productos}">
+                            <td class="mono" style="color:var(--mid); font-size:0.8rem;" th:text="${producto.id}">1</td>
+                            <td style="font-weight:600;" th:text="${producto.nombre}">Producto</td>
+                            <td class="mono" style="font-weight:700;" th:text="'$' + ${producto.precio}">$0</td>
+                            <td>
+                                <span th:text="${producto.stock}"
+                                      th:style="${producto.stock <= 0} ? 'color: var(--rust); font-weight:700;' : (${producto.stock} <= 5 ? 'color: #d97706; font-weight:700;' : 'color: #16a34a; font-weight:700;')">0</span>
+                            </td>
+                            <td>
+                                <span class="cat-tag" th:if="${producto.categoria != null}" th:text="${producto.categoria.nombre}">—</span>
+                                <span th:if="${producto.categoria == null}" style="color:var(--mid); font-size:0.8rem;">—</span>
+                            </td>
+                            <td style="color:var(--mid);">36-46</td>
+                            <td style="display:flex; gap:6px; align-items:center;">
+                                <a th:href="@{/productos/editar/{id}(id=${producto.id})}" class="btn-ghost" style="padding:6px 12px; font-size:0.68rem;">
+                                    <i class="bi bi-pencil"></i> Editar
+                                </a>
+                                <a th:href="@{/productos/eliminar/{id}(id=${producto.id})}" class="btn-danger" style="padding:6px 12px; font-size:0.68rem;"
+                                   onclick="return confirm('¿Eliminar este producto?');">
+                                    <i class="bi bi-trash3"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(productos)}">
+                            <td colspan="7" style="text-align:center; padding:40px; color:var(--mid); font-size:0.85rem;">
+                                <i class="bi bi-inbox" style="font-size:1.8rem; display:block; margin-bottom:8px; opacity:0.3;"></i>
+                                No se encontraron productos.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <nav th:if="${totalPages > 1}" style="margin-top:24px;">
+            <ul class="pagination-wrap">
+                <li th:classappend="${currentPage == 0} ? 'disabled'">
+                    <a th:unless="${currentPage == 0}" th:href="@{/productos(page=${currentPage - 1}, buscar=${buscar})}"><i class="bi bi-chevron-left"></i></a>
+                    <span th:if="${currentPage == 0}"><i class="bi bi-chevron-left"></i></span>
+                </li>
+                <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${i == currentPage} ? 'active'">
+                    <a th:href="@{/productos(page=${i}, buscar=${buscar})}" th:text="${i + 1}">1</a>
+                </li>
+                <li th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                    <a th:unless="${currentPage == totalPages - 1}" th:href="@{/productos(page=${currentPage + 1}, buscar=${buscar})}"><i class="bi bi-chevron-right"></i></a>
+                    <span th:if="${currentPage == totalPages - 1}"><i class="bi bi-chevron-right"></i></span>
+                </li>
+            </ul>
+        </nav>
+    </main>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

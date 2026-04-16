@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot - TiendaApplication",
+            "request": "launch",
+            "mainClass": "com.tienda.TiendaApplication",
+            "projectName": "tienda-especializada"
+        }
+    ]
+}
