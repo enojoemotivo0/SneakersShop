@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle}, 'Formulario de producto')}"></head>
+<body class="snk-grain">
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main>
+    <section class="snk-section">
+        <div class="snk-container" style="max-width: 800px;">
+            <div class="snk-section-header">
+                <div>
+                    <span class="text-tag" style="color: var(--snk-red);">· Admin ·</span>
+                    <h1 th:if="${product.id == null}">Nuevo <span class="accent">producto</span></h1>
+                    <h1 th:if="${product.id != null}">Editar <span class="accent">producto</span></h1>
+                </div>
+                <a th:href="@{/admin/products}" class="snk-link-arrow">← Volver</a>
+            </div>
+
+            <form th:action="@{/admin/products}" method="post" th:object="${product}" class="snk-card">
+                <input type="hidden" th:field="*{id}">
+
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
+                    <div>
+                        <label class="snk-form-label">Nombre *</label>
+                        <input type="text" th:field="*{name}" class="snk-form-control" required>
+                        <small th:if="${#fields.hasErrors('name')}" style="color: var(--snk-red);" th:errors="*{name}"></small>
+                    </div>
+                    <div>
+                        <label class="snk-form-label">Marca *</label>
+                        <input type="text" th:field="*{brand}" class="snk-form-control" required>
+                    </div>
+                </div>
+
+                <div class="snk-mt-3">
+                    <label class="snk-form-label">Descripción</label>
+                    <textarea th:field="*{description}" class="snk-form-control" rows="3"></textarea>
+                </div>
+
+                <div class="snk-mt-3" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                    <div>
+                        <label class="snk-form-label">Precio (€) *</label>
+                        <input type="number" step="0.01" th:field="*{price}" class="snk-form-control" required>
+                    </div>
+                    <div>
+                        <label class="snk-form-label">Precio original</label>
+                        <input type="number" step="0.01" th:field="*{originalPrice}" class="snk-form-control"
+                               placeholder="(para descuento)">
+                    </div>
+                    <div>
+                        <label class="snk-form-label">Stock *</label>
+                        <input type="number" th:field="*{stock}" class="snk-form-control" required min="0">
+                    </div>
+                </div>
+
+                <div class="snk-mt-3" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                    <div>
+                        <label class="snk-form-label">Color</label>
+                        <input type="text" th:field="*{color}" class="snk-form-control" placeholder="Ej: Negro/Volt">
+                    </div>
+                    <div>
+                        <label class="snk-form-label">Rango de tallas</label>
+                        <input type="text" th:field="*{sizeRange}" class="snk-form-control" placeholder="Ej: 38-46">
+                    </div>
+                    <div>
+                        <label class="snk-form-label">Categoría *</label>
+                        <select name="categoryId" class="snk-form-select" required>
+                            <option value="">-- Selecciona --</option>
+                            <option th:each="cat : ${categories}"
+                                    th:value="${cat.id}"
+                                    th:text="${cat.name}"
+                                    th:selected="${product.category != null and product.category.id == cat.id}"></option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="snk-mt-3">
+                    <label class="snk-form-label">URL de la imagen</label>
+                    <input type="url" th:field="*{imageUrl}" class="snk-form-control"
+                           placeholder="https://...">
+                </div>
+
+                <div class="snk-mt-3 d-flex gap-3">
+                    <label class="d-flex gap-2 align-items-center">
+                        <input type="checkbox" th:field="*{featured}"> <span>Destacado en home</span>
+                    </label>
+                    <label class="d-flex gap-2 align-items-center">
+                        <input type="checkbox" th:field="*{active}"> <span>Activo</span>
+                    </label>
+                </div>
+
+                <div class="snk-mt-4 d-flex gap-2">
+                    <button type="submit" class="snk-btn snk-btn-dark">
+                        Guardar producto <span class="arrow">→</span>
+                    </button>
+                    <a th:href="@{/admin/products}" class="snk-btn" style="background: var(--snk-cream); color: var(--snk-black);">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

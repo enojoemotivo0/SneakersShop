@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle}, 'Gestión de categorías')}"></head>
+<body class="snk-grain">
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main>
+    <section class="snk-section">
+        <div class="snk-container">
+            <div class="snk-section-header">
+                <div>
+                    <span class="text-tag" style="color: var(--snk-red);">· Admin ·</span>
+                    <h1>Categorías</h1>
+                </div>
+            </div>
+
+            <nav th:replace="~{admin/admin-nav :: adminNav('categories')}"></nav>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;" class="admin-cat-layout">
+                <!-- Lista -->
+                <div class="snk-card" style="padding: 0;">
+                    <table class="snk-table">
+                        <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Slug</th>
+                            <th>Descripción</th>
+                            <th>Productos</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="cat : ${categories}">
+                            <td>
+                                <strong style="font-family: var(--font-display); text-transform: uppercase;" th:text="${cat.name}">Nombre</strong>
+                            </td>
+                            <td class="text-mono" style="font-size: 0.85rem;" th:text="${cat.slug}">slug</td>
+                            <td style="max-width: 300px;" th:text="${cat.description}">Desc</td>
+                            <td>
+                                <span class="snk-badge" th:text="${cat.products.size()}">0</span>
+                            </td>
+                            <td>
+                                <form th:action="@{/admin/categories/{id}/delete(id=${cat.id})}" method="post"
+                                      onsubmit="return confirm('¿Eliminar categoría? Se eliminarán también sus productos.');">
+                                    <button type="submit" class="snk-btn"
+                                            style="padding: 0.4rem 0.7rem; font-size: 0.7rem; background: none; color: var(--snk-red); border: 1px solid var(--snk-red);">
+                                        ✕
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Formulario -->
+                <form th:action="@{/admin/categories}" method="post" th:object="${category}" class="snk-card">
+                    <h3 style="font-size: 1.1rem;">Nueva categoría</h3>
+
+                    <div class="snk-mt-3">
+                        <label class="snk-form-label">Nombre *</label>
+                        <input type="text" th:field="*{name}" class="snk-form-control" required>
+                    </div>
+
+                    <div class="snk-mt-3">
+                        <label class="snk-form-label">Descripción</label>
+                        <textarea th:field="*{description}" class="snk-form-control" rows="3"></textarea>
+                    </div>
+
+                    <div class="snk-mt-3">
+                        <label class="snk-form-label">Slug (opcional)</label>
+                        <input type="text" th:field="*{slug}" class="snk-form-control"
+                               placeholder="se genera automáticamente">
+                    </div>
+
+                    <button type="submit" class="snk-btn snk-btn-dark snk-mt-3" style="width: 100%; justify-content: center;">
+                        Añadir <span class="arrow">→</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+
+<style>
+@media (max-width: 992px) { .admin-cat-layout { grid-template-columns: 1fr !important; } }
+</style>
+</body>
+</html>

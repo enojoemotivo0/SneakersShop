@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<nav th:fragment="adminNav(active)"
+     class="d-flex gap-2 flex-wrap snk-mb-4"
+     style="padding: 1rem 0; border-bottom: 1px solid #e0ddd5;">
+    <a th:href="@{/admin}"
+       th:class="${active == 'dashboard'} ? 'snk-btn snk-btn-dark' : 'snk-btn'"
+       th:style="${active == 'dashboard'} ? 'font-size: 0.75rem; padding: 0.6rem 1.2rem;' : 'font-size: 0.75rem; padding: 0.6rem 1.2rem; background: var(--snk-cream); color: var(--snk-black);'">Dashboard</a>
+
+    <a th:href="@{/admin/products}"
+       th:class="${active == 'products'} ? 'snk-btn snk-btn-dark' : 'snk-btn'"
+       th:style="${active == 'products'} ? 'font-size: 0.75rem; padding: 0.6rem 1.2rem;' : 'font-size: 0.75rem; padding: 0.6rem 1.2rem; background: var(--snk-cream); color: var(--snk-black);'">Productos</a>
+
+    <a th:href="@{/admin/categories}"
+       th:class="${active == 'categories'} ? 'snk-btn snk-btn-dark' : 'snk-btn'"
+       th:style="${active == 'categories'} ? 'font-size: 0.75rem; padding: 0.6rem 1.2rem;' : 'font-size: 0.75rem; padding: 0.6rem 1.2rem; background: var(--snk-cream); color: var(--snk-black);'">Categorías</a>
+
+    <a th:href="@{/admin/orders}"
+       th:class="${active == 'orders'} ? 'snk-btn snk-btn-dark' : 'snk-btn'"
+       th:style="${active == 'orders'} ? 'font-size: 0.75rem; padding: 0.6rem 1.2rem;' : 'font-size: 0.75rem; padding: 0.6rem 1.2rem; background: var(--snk-cream); color: var(--snk-black);'">Pedidos</a>
+
+    <a th:href="@{/admin/users}"
+       th:class="${active == 'users'} ? 'snk-btn snk-btn-dark' : 'snk-btn'"
+       th:style="${active == 'users'} ? 'font-size: 0.75rem; padding: 0.6rem 1.2rem;' : 'font-size: 0.75rem; padding: 0.6rem 1.2rem; background: var(--snk-cream); color: var(--snk-black);'">Clientes</a>
+</nav>
+
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle}, ${pageDescription})}"></head>
+<body class="snk-grain">
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main>
+    <section class="snk-section">
+        <div class="snk-container">
+
+            <div class="snk-section-header">
+                <div>
+                    <span class="text-tag">Catálogo completo</span>
+                    <h1 th:if="${query == null}">Todas <span class="accent">las sneakers</span></h1>
+                    <h1 th:if="${query != null}">
+                        Resultados para<br>
+                        <span class="accent" th:text="'“' + ${query} + '”'">query</span>
+                    </h1>
+                </div>
+
+                <!-- Filtros -->
+                <form method="get" th:action="@{/products}" class="d-flex gap-2 flex-wrap">
+                    <input th:if="${query != null}" type="hidden" name="q" th:value="${query}">
+                    <select name="categoryId" class="snk-form-select" style="min-width: 180px;" onchange="this.form.submit()">
+                        <option value="">Todas las categorías</option>
+                        <option th:each="cat : ${allCategories}"
+                                th:value="${cat.id}"
+                                th:text="${cat.name}"
+                                th:selected="${selectedCategoryId != null and selectedCategoryId == cat.id}">Categoría</option>
+                    </select>
+                    <select name="sort" class="snk-form-select" style="min-width: 180px;" onchange="this.form.submit()">
+                        <option value="createdAt,desc" th:selected="${currentSort == 'createdAt,desc'}">Más recientes</option>
+                        <option value="price,asc" th:selected="${currentSort == 'price,asc'}">Precio ascendente</option>
+                        <option value="price,desc" th:selected="${currentSort == 'price,desc'}">Precio descendente</option>
+                        <option value="name,asc" th:selected="${currentSort == 'name,asc'}">A-Z</option>
+                    </select>
+                </form>
+            </div>
+
+            <!-- Grid productos -->
+            <div class="snk-products-grid" th:if="${!products.isEmpty()}">
+                <article th:each="product : ${products}" class="snk-product-card">
+                    <a th:href="@{/products/{id}(id=${product.id})}" class="snk-product-img-wrap">
+                        <span class="snk-product-badge sale"
+                              th:if="${product.discountPercentage > 0}"
+                              th:text="'-' + ${product.discountPercentage} + '%'"></span>
+                        <span class="snk-product-badge new"
+                              th:if="${product.discountPercentage == 0 and product.featured}">Nuevo</span>
+                        <img th:src="${product.imageUrl}"
+                             th:alt="${product.name}"
+                             class="snk-product-img"
+                             loading="lazy">
+                    </a>
+                    <div class="snk-product-body">
+                        <span class="snk-product-brand" th:text="${product.brand}">Marca</span>
+                        <h3 class="snk-product-title">
+                            <a th:href="@{/products/{id}(id=${product.id})}" th:text="${product.name}">Nombre</a>
+                        </h3>
+                        <span class="snk-product-meta"
+                              th:text="${product.category.name} + ' · ' + ${product.color}">Cat · Color</span>
+
+                        <div class="snk-product-price-row">
+                            <div>
+                                <span class="snk-product-price-original"
+                                      th:if="${product.originalPrice != null and product.discountPercentage > 0}"
+                                      th:text="${#numbers.formatDecimal(product.originalPrice, 1, 2)} + ' €'"></span>
+                                <span class="snk-product-price"
+                                      th:text="${#numbers.formatDecimal(product.price, 1, 2)} + ' €'"></span>
+                            </div>
+                            <a th:href="@{/products/{id}(id=${product.id})}" class="snk-product-cta" aria-label="Ver producto">→</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <div th:if="${products.isEmpty()}" class="snk-card snk-text-center" style="padding: 4rem 2rem;">
+                <h3>No hay productos que mostrar</h3>
+                <p class="snk-mt-2">Prueba con otra búsqueda o explora todo el catálogo.</p>
+                <a th:href="@{/products}" class="snk-btn snk-btn-dark snk-mt-3">Ver todo</a>
+            </div>
+
+            <!-- Paginación -->
+            <nav th:if="${products.totalPages > 1}" class="snk-mt-5" aria-label="Paginación">
+                <ul class="pagination justify-content-center">
+                    <li th:class="'page-item' + (${products.first} ? ' disabled' : '')">
+                        <a class="page-link"
+                           th:href="@{/products(page=${products.number - 1}, categoryId=${selectedCategoryId}, q=${query}, sort=${currentSort})}">
+                            ← Anterior
+                        </a>
+                    </li>
+                    <li th:each="i : ${#numbers.sequence(0, products.totalPages - 1)}"
+                        th:class="'page-item' + (${i == products.number} ? ' active' : '')">
+                        <a class="page-link"
+                           th:href="@{/products(page=${i}, categoryId=${selectedCategoryId}, q=${query}, sort=${currentSort})}"
+                           th:text="${i + 1}">1</a>
+                    </li>
+                    <li th:class="'page-item' + (${products.last} ? ' disabled' : '')">
+                        <a class="page-link"
+                           th:href="@{/products(page=${products.number + 1}, categoryId=${selectedCategoryId}, q=${query}, sort=${currentSort})}">
+                            Siguiente →
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

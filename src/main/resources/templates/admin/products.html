@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle}, 'Gestión de productos')}"></head>
+<body class="snk-grain">
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main>
+    <section class="snk-section">
+        <div class="snk-container">
+            <div class="snk-section-header">
+                <div>
+                    <span class="text-tag" style="color: var(--snk-red);">· Admin ·</span>
+                    <h1>Productos</h1>
+                </div>
+                <a th:href="@{/admin/products/new}" class="snk-btn snk-btn-dark">
+                    + Nuevo producto
+                </a>
+            </div>
+
+            <nav th:replace="~{admin/admin-nav :: adminNav('products')}"></nav>
+
+            <div class="snk-card" style="padding: 0;">
+                <table class="snk-table">
+                    <thead>
+                    <tr>
+                        <th>Imagen</th>
+                        <th>Producto</th>
+                        <th>Categoría</th>
+                        <th>Precio</th>
+                        <th>Stock</th>
+                        <th>Destacado</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="product : ${products}">
+                        <td>
+                            <div style="width: 50px; height: 50px; background: linear-gradient(135deg,#f0ebe0,#e8e2d3); border-radius: 6px; overflow: hidden;">
+                                <img th:src="${product.imageUrl}" th:alt="${product.name}"
+                                     style="width: 100%; height: 100%; object-fit: cover; mix-blend-mode: multiply;">
+                            </div>
+                        </td>
+                        <td>
+                            <strong style="font-family: var(--font-display); text-transform: uppercase;" th:text="${product.name}">Nombre</strong>
+                            <div class="text-tag" style="color: var(--snk-smoke);" th:text="${product.brand}">Marca</div>
+                        </td>
+                        <td th:text="${product.category.name}">Cat</td>
+                        <td>
+                            <strong th:text="${#numbers.formatDecimal(product.price, 1, 2)} + ' €'">0€</strong>
+                        </td>
+                        <td>
+                            <span th:if="${product.stock > 10}" class="snk-badge snk-badge-shipped" th:text="${product.stock}"></span>
+                            <span th:if="${product.stock > 0 and product.stock <= 10}" class="snk-badge snk-badge-pending" th:text="${product.stock}"></span>
+                            <span th:if="${product.stock == 0}" class="snk-badge snk-badge-cancelled">0</span>
+                        </td>
+                        <td>
+                            <span th:if="${product.featured}" class="snk-badge snk-badge-delivered">★</span>
+                            <span th:if="${!product.featured}" style="color: var(--snk-smoke);">—</span>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-1">
+                                <a th:href="@{/admin/products/{id}/edit(id=${product.id})}"
+                                   class="snk-btn" style="padding: 0.4rem 0.7rem; font-size: 0.7rem; background: var(--snk-cream); color: var(--snk-black);">
+                                    Editar
+                                </a>
+                                <form th:action="@{/admin/products/{id}/delete(id=${product.id})}" method="post" style="display: inline;"
+                                      onsubmit="return confirm('¿Seguro que quieres desactivar este producto?');">
+                                    <button type="submit" class="snk-btn"
+                                            style="padding: 0.4rem 0.7rem; font-size: 0.7rem; background: none; color: var(--snk-red); border: 1px solid var(--snk-red);">
+                                        ✕
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

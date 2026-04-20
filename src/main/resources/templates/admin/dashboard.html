@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle}, 'Panel de administración')}"></head>
+<body class="snk-grain">
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main>
+    <section class="snk-section">
+        <div class="snk-container">
+
+            <div class="snk-section-header">
+                <div>
+                    <span class="text-tag" style="color: var(--snk-red);">· Área administrativa ·</span>
+                    <h1>Panel <span class="accent">admin</span></h1>
+                </div>
+            </div>
+
+            <!-- Navegación admin -->
+            <nav class="d-flex gap-2 flex-wrap snk-mb-4" style="padding: 1rem 0; border-bottom: 1px solid #e0ddd5;">
+                <a th:href="@{/admin}" class="snk-btn snk-btn-dark" style="font-size: 0.75rem; padding: 0.6rem 1.2rem;">Dashboard</a>
+                <a th:href="@{/admin/products}" class="snk-btn" style="font-size: 0.75rem; padding: 0.6rem 1.2rem; background: var(--snk-cream); color: var(--snk-black);">Productos</a>
+                <a th:href="@{/admin/categories}" class="snk-btn" style="font-size: 0.75rem; padding: 0.6rem 1.2rem; background: var(--snk-cream); color: var(--snk-black);">Categorías</a>
+                <a th:href="@{/admin/orders}" class="snk-btn" style="font-size: 0.75rem; padding: 0.6rem 1.2rem; background: var(--snk-cream); color: var(--snk-black);">Pedidos</a>
+            </nav>
+
+            <!-- Métricas -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem;">
+                <div class="snk-card">
+                    <span class="text-tag">Productos</span>
+                    <div style="font-family: var(--font-display); font-size: 3rem; line-height: 1; margin-top: 0.5rem;"
+                         th:text="${totalProducts}">0</div>
+                    <small style="color: var(--snk-smoke);">Activos en catálogo</small>
+                </div>
+                <div class="snk-card">
+                    <span class="text-tag">Categorías</span>
+                    <div style="font-family: var(--font-display); font-size: 3rem; line-height: 1; margin-top: 0.5rem;"
+                         th:text="${totalCategories}">0</div>
+                    <small style="color: var(--snk-smoke);">Registradas</small>
+                </div>
+                <div class="snk-card" style="background: var(--snk-black); color: var(--snk-white);">
+                    <span class="text-tag" style="color: var(--snk-volt);">Pedidos totales</span>
+                    <div style="font-family: var(--font-display); font-size: 3rem; line-height: 1; margin-top: 0.5rem; color: var(--snk-volt);"
+                         th:text="${totalOrders}">0</div>
+                    <small style="color: var(--snk-mist);">Realizados en la tienda</small>
+                </div>
+            </div>
+
+            <!-- Pedidos recientes -->
+            <div class="snk-card snk-mt-5" style="padding: 0;">
+                <div style="padding: 1.25rem; border-bottom: 1px solid #f0ede5;">
+                    <h3 style="font-size: 1.25rem; margin: 0;">Pedidos recientes</h3>
+                </div>
+                <table class="snk-table" th:if="${!recentOrders.isEmpty()}">
+                    <thead>
+                    <tr>
+                        <th>Nº</th>
+                        <th>Cliente</th>
+                        <th>Fecha</th>
+                        <th>Total</th>
+                        <th>Estado</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="order : ${recentOrders}">
+                        <td class="text-mono" th:text="${order.orderNumber}">SNK-0</td>
+                        <td th:text="${order.user.fullName}">Cliente</td>
+                        <td th:text="${#temporals.format(order.createdAt, 'dd/MM HH:mm')}">01/01</td>
+                        <td><strong th:text="${#numbers.formatDecimal(order.total, 1, 2)} + ' €'"></strong></td>
+                        <td>
+                            <span th:class="'snk-badge snk-badge-' + ${#strings.toLowerCase(order.status.name())}"
+                                  th:text="${order.status.name()}"></span>
+                        </td>
+                        <td>
+                            <a th:href="@{/admin/orders}" class="snk-link-arrow" style="font-size: 0.75rem;">Ver →</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div th:if="${recentOrders.isEmpty()}" style="padding: 2rem; text-align: center; color: var(--snk-smoke);">
+                    Aún no hay pedidos.
+                </div>
+            </div>
+
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

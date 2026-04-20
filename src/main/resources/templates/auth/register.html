@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle}, 'Crea tu cuenta en Snikers Shop')}"></head>
+<body class="snk-grain">
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main>
+    <section class="snk-section">
+        <div class="snk-container" style="max-width: 560px;">
+            <div class="snk-card">
+                <div class="snk-text-center snk-mb-4">
+                    <span class="text-tag" style="color: var(--snk-smoke);">Únete al club</span>
+                    <h1 style="font-size: 2.5rem; margin-top: 0.5rem;">Crear <span class="accent">cuenta</span></h1>
+                    <p style="color: var(--snk-smoke); margin-top: 0.5rem;">Drops exclusivos, descuentos y acceso anticipado</p>
+                </div>
+
+                <form th:action="@{/register}" th:object="${user}" method="post">
+
+                    <div class="snk-mb-3">
+                        <label class="snk-form-label">Nombre completo *</label>
+                        <input type="text" th:field="*{fullName}" class="snk-form-control" required
+                               placeholder="Nombre Apellidos">
+                        <small th:if="${#fields.hasErrors('fullName')}" style="color: var(--snk-red); font-size: 0.75rem;"
+                               th:errors="*{fullName}"></small>
+                    </div>
+
+                    <div class="snk-mb-3">
+                        <label class="snk-form-label">Email *</label>
+                        <input type="email" th:field="*{email}" class="snk-form-control" required
+                               placeholder="tu@email.com">
+                        <small th:if="${#fields.hasErrors('email')}" style="color: var(--snk-red); font-size: 0.75rem;"
+                               th:errors="*{email}"></small>
+                    </div>
+
+                    <div class="snk-mb-3">
+                        <label class="snk-form-label">Contraseña * (mínimo 8 caracteres)</label>
+                        <input type="password" th:field="*{password}" class="snk-form-control" required minlength="8"
+                               placeholder="••••••••">
+                        <small th:if="${#fields.hasErrors('password')}" style="color: var(--snk-red); font-size: 0.75rem;"
+                               th:errors="*{password}"></small>
+                    </div>
+
+                    <div class="snk-mb-3" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <label class="snk-form-label">Teléfono</label>
+                            <input type="tel" th:field="*{phone}" class="snk-form-control" placeholder="+34 600 000 000">
+                        </div>
+                        <div>
+                            <label class="snk-form-label">Dirección</label>
+                            <input type="text" th:field="*{address}" class="snk-form-control" placeholder="Calle, número, ciudad">
+                        </div>
+                    </div>
+
+                    <label class="snk-mb-3 d-flex gap-2 align-items-start text-mono" style="font-size: 0.8rem; color: var(--snk-smoke);">
+                        <input type="checkbox" required style="margin-top: 0.25rem;">
+                        <span>Acepto los términos y la política de privacidad de Snikers Shop</span>
+                    </label>
+
+                    <button type="submit" class="snk-btn snk-btn-dark w-100 justify-content-center snk-mt-2">
+                        Crear mi cuenta <span class="arrow">→</span>
+                    </button>
+                </form>
+
+                <div class="snk-text-center snk-mt-4 text-mono" style="font-size: 0.85rem; color: var(--snk-smoke);">
+                    ¿Ya tienes cuenta?
+                    <a th:href="@{/login}" style="color: var(--snk-black); font-weight: 700;">Inicia sesión</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

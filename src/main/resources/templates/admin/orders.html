@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle}, 'Gestión de pedidos')}"></head>
+<body class="snk-grain">
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main>
+    <section class="snk-section">
+        <div class="snk-container">
+            <div class="snk-section-header">
+                <div>
+                    <span class="text-tag" style="color: var(--snk-red);">· Admin ·</span>
+                    <h1>Pedidos</h1>
+                </div>
+            </div>
+
+            <nav th:replace="~{admin/admin-nav :: adminNav('orders')}"></nav>
+
+            <div class="snk-card" style="padding: 0;">
+                <table class="snk-table">
+                    <thead>
+                    <tr>
+                        <th>Nº Pedido</th>
+                        <th>Cliente</th>
+                        <th>Fecha</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="order : ${orders}">
+                        <td><strong class="text-mono" th:text="${order.orderNumber}">SNK</strong></td>
+                        <td>
+                            <div th:text="${order.user.fullName}">Cliente</div>
+                            <small style="color: var(--snk-smoke);" th:text="${order.user.email}">email</small>
+                        </td>
+                        <td th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}">01/01</td>
+                        <td th:text="${order.items.size()}">0</td>
+                        <td><strong th:text="${#numbers.formatDecimal(order.total, 1, 2)} + ' €'"></strong></td>
+                        <td>
+                            <span th:class="'snk-badge snk-badge-' + ${#strings.toLowerCase(order.status.name())}"
+                                  th:text="${order.status.name()}"></span>
+                        </td>
+                        <td>
+                            <form th:action="@{/admin/orders/{id}/status(id=${order.id})}" method="post" class="d-flex gap-1">
+                                <select name="status" class="snk-form-select" style="padding: 0.3rem 0.5rem; font-size: 0.75rem;">
+                                    <option value="PENDING" th:selected="${order.status.name() == 'PENDING'}">Pendiente</option>
+                                    <option value="PAID" th:selected="${order.status.name() == 'PAID'}">Pagado</option>
+                                    <option value="SHIPPED" th:selected="${order.status.name() == 'SHIPPED'}">Enviado</option>
+                                    <option value="DELIVERED" th:selected="${order.status.name() == 'DELIVERED'}">Entregado</option>
+                                    <option value="CANCELLED" th:selected="${order.status.name() == 'CANCELLED'}">Cancelado</option>
+                                </select>
+                                <button type="submit" class="snk-btn"
+                                        style="padding: 0.3rem 0.7rem; font-size: 0.7rem; background: var(--snk-volt); color: var(--snk-black);">
+                                    ✓
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <div th:if="${orders.isEmpty()}" style="padding: 3rem; text-align: center; color: var(--snk-smoke);">
+                    Aún no hay pedidos.
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

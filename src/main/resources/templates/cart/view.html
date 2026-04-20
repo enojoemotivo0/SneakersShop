@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head(${pageTitle}, 'Tu carrito en Snikers Shop')}"></head>
+<body class="snk-grain">
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main style="background: var(--snk-cream); min-height: 80vh;">
+
+    <!-- Header del carrito con contador grande -->
+    <section style="background: var(--snk-black); color: var(--snk-white); padding: 3rem 5vw 2rem; border-bottom: 4px solid var(--snk-volt);">
+        <div class="snk-container">
+            <div class="d-flex justify-content-between align-items-end flex-wrap gap-3">
+                <div>
+                    <span class="text-tag" style="color: var(--snk-volt);">Tu selección</span>
+                    <h1 style="font-size: clamp(2.5rem, 6vw, 5rem); color: var(--snk-white); line-height: 0.9; margin-top: 0.5rem;">
+                        Tu <span style="color: var(--snk-volt); font-style: italic; display: inline-block; transform: skewX(-6deg);">carrito</span>
+                    </h1>
+                    <p class="text-mono snk-mt-2" style="color: var(--snk-mist); font-size: 0.9rem;" th:if="${!items.isEmpty()}">
+                        <span th:text="${items.size()}">0</span> artículos · Revisa antes de comprar
+                    </p>
+                </div>
+                <a th:href="@{/products}" class="snk-btn snk-btn-ghost">
+                    ← Seguir comprando
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Vacío -->
+    <section th:if="${items.isEmpty()}" class="snk-section">
+        <div class="snk-container">
+            <div class="snk-card snk-text-center" style="padding: 6rem 2rem; max-width: 600px; margin: 0 auto;">
+                <div style="font-family: var(--font-display); font-size: 6rem; line-height: 1; color: var(--snk-volt);">👟</div>
+                <h2 class="snk-mt-3" style="font-size: 2.5rem;">
+                    Tu carrito está <span class="accent">vacío</span>
+                </h2>
+                <p class="snk-mt-3" style="color: var(--snk-smoke); font-size: 1.1rem; max-width: 400px; margin: 0 auto;">
+                    Todavía no has añadido nada. Explora nuestra colección y encuentra tu próximo par.
+                </p>
+                <a th:href="@{/products}" class="snk-btn snk-btn-dark snk-mt-4">
+                    Explorar catálogo <span class="arrow">→</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Con items -->
+    <section th:unless="${items.isEmpty()}" class="snk-section" style="padding-top: 3rem;">
+        <div class="snk-container">
+            <div class="row g-4">
+
+                <!-- ============ COLUMNA IZQUIERDA: items ============ -->
+                <div class="col-lg-8">
+
+                    <div th:each="item, iter : ${items}"
+                         class="cart-item-card"
+                         style="background: var(--snk-white); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; box-shadow: 0 2px 12px rgba(0,0,0,0.05); transition: all 0.3s var(--easing);">
+
+                        <div class="d-flex gap-3 align-items-start flex-wrap flex-md-nowrap">
+
+                            <!-- Imagen grande -->
+                            <a th:href="@{/products/{id}(id=${item.productId})}"
+                               style="width: 140px; height: 140px; flex-shrink: 0; background: linear-gradient(135deg, #f0ebe0, #e8e2d3); border-radius: 10px; overflow: hidden; display: block; position: relative;">
+                                <img th:src="${item.imageUrl}" th:alt="${item.name}"
+                                     style="width: 100%; height: 100%; object-fit: cover; mix-blend-mode: multiply; transition: transform 0.5s var(--easing);"
+                                     onmouseover="this.style.transform='scale(1.1) rotate(-3deg)'"
+                                     onmouseout="this.style.transform='scale(1) rotate(0)'">
+                            </a>
+
+                            <!-- Info producto -->
+                            <div style="flex: 1; min-width: 0;">
+                                <div class="d-flex justify-content-between align-items-start gap-2">
+                                    <div>
+                                        <span class="text-tag" style="color: var(--snk-smoke);" th:text="${item.brand}">Marca</span>
+                                        <h3 style="font-family: var(--font-display); text-transform: uppercase; font-size: 1.35rem; line-height: 1.1; margin: 0.25rem 0;">
+                                            <a th:href="@{/products/{id}(id=${item.productId})}"
+                                               style="color: var(--snk-black); text-decoration: none;"
+                                               th:text="${item.name}">Nombre</a>
+                                        </h3>
+                                        <div class="d-flex gap-3 flex-wrap snk-mt-2">
+                                            <span class="text-mono" style="font-size: 0.8rem; background: var(--snk-cream); padding: 0.3rem 0.7rem; border-radius: 100px;">
+                                                Talla <strong th:text="${item.size ?: '-'}">40</strong>
+                                            </span>
+                                            <span class="text-mono" style="font-size: 0.8rem; color: var(--snk-smoke);">
+                                                Precio: <strong th:text="${#numbers.formatDecimal(item.unitPrice, 1, 2)} + ' €'"></strong>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Botón eliminar -->
+                                    <form th:action="@{/cart/remove}" method="post" style="margin: 0;">
+                                        <input type="hidden" name="productId" th:value="${item.productId}">
+                                        <input type="hidden" name="size" th:value="${item.size}">
+                                        <button type="submit"
+                                                style="background: none; border: 1px solid #e0ddd5; color: var(--snk-smoke); width: 36px; height: 36px; border-radius: 50%; font-size: 1rem; transition: all 0.2s var(--easing); cursor: pointer;"
+                                                onmouseover="this.style.background='var(--snk-red)'; this.style.color='white'; this.style.borderColor='var(--snk-red)';"
+                                                onmouseout="this.style.background='none'; this.style.color='var(--snk-smoke)'; this.style.borderColor='#e0ddd5';"
+                                                aria-label="Eliminar">✕</button>
+                                    </form>
+                                </div>
+
+                                <!-- Quantity + subtotal -->
+                                <div class="d-flex justify-content-between align-items-center snk-mt-3 flex-wrap gap-3"
+                                     style="padding-top: 1rem; border-top: 1px solid #f0ede5;">
+
+                                    <!-- Selector de cantidad estilo premium -->
+                                    <form th:action="@{/cart/update}" method="post"
+                                          class="d-flex align-items-center gap-2"
+                                          style="background: var(--snk-cream); border-radius: 100px; padding: 0.3rem;">
+                                        <input type="hidden" name="productId" th:value="${item.productId}">
+                                        <input type="hidden" name="size" th:value="${item.size}">
+
+                                        <button type="button"
+                                                th:attr="data-target='qty-' + ${iter.index}, data-action='dec'"
+                                                class="qty-btn"
+                                                style="width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--snk-white); font-weight: 700; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">−</button>
+
+                                        <input type="number" name="quantity" th:value="${item.quantity}"
+                                               th:id="'qty-' + ${iter.index}"
+                                               min="1" max="20"
+                                               style="width: 42px; border: none; background: transparent; text-align: center; font-family: var(--font-mono); font-weight: 700; font-size: 1rem;"
+                                               onchange="this.form.submit()">
+
+                                        <button type="button"
+                                                th:attr="data-target='qty-' + ${iter.index}, data-action='inc'"
+                                                class="qty-btn"
+                                                style="width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--snk-white); font-weight: 700; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">+</button>
+
+                                        <noscript>
+                                            <button type="submit" style="background: var(--snk-black); color: white; border: none; border-radius: 100px; padding: 0.3rem 0.7rem; font-size: 0.75rem; margin-left: 0.3rem;">OK</button>
+                                        </noscript>
+                                    </form>
+
+                                    <div class="text-end">
+                                        <small class="text-tag" style="color: var(--snk-smoke);">Subtotal</small>
+                                        <div style="font-family: var(--font-display); font-size: 1.5rem; line-height: 1;"
+                                             th:text="${#numbers.formatDecimal(item.subtotal, 1, 2)} + ' €'">0€</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Acciones secundarias -->
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 snk-mt-3">
+                        <form th:action="@{/cart/clear}" method="post" style="margin: 0;"
+                              onsubmit="return confirm('¿Seguro que quieres vaciar todo el carrito?');">
+                            <button type="submit"
+                                    style="background: none; border: 1px solid #e0ddd5; color: var(--snk-smoke); padding: 0.6rem 1.2rem; border-radius: 100px; font-family: var(--font-mono); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; transition: all 0.2s var(--easing);"
+                                    onmouseover="this.style.color='var(--snk-red)'; this.style.borderColor='var(--snk-red)';"
+                                    onmouseout="this.style.color='var(--snk-smoke)'; this.style.borderColor='#e0ddd5';">
+                                Vaciar carrito
+                            </button>
+                        </form>
+
+                        <a th:href="@{/products}" class="text-mono"
+                           style="color: var(--snk-black); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; border-bottom: 1px solid var(--snk-black); padding-bottom: 2px;">
+                            + Añadir más productos
+                        </a>
+                    </div>
+
+                </div>
+
+                <!-- ============ COLUMNA DERECHA: resumen ============ -->
+                <aside class="col-lg-4">
+                    <div style="background: var(--snk-black); color: var(--snk-white); border-radius: 16px; padding: 2rem; position: sticky; top: 100px; overflow: hidden;">
+
+                        <!-- Efecto decoración -->
+                        <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: var(--snk-volt); border-radius: 50%; opacity: 0.08; pointer-events: none;"></div>
+
+                        <div style="position: relative; z-index: 1;">
+                            <span class="text-tag" style="color: var(--snk-volt);">Resumen</span>
+                            <h3 class="snk-mt-2" style="color: var(--snk-white); font-size: 1.75rem; font-family: var(--font-display); text-transform: uppercase;">
+                                Tu pedido
+                            </h3>
+
+                            <!-- Desglose -->
+                            <div class="snk-mt-4" style="font-family: var(--font-mono); font-size: 0.9rem;">
+                                <div class="d-flex justify-content-between snk-mt-2">
+                                    <span style="color: var(--snk-mist);">Artículos</span>
+                                    <span th:text="${items.size()}">0</span>
+                                </div>
+                                <div class="d-flex justify-content-between snk-mt-2">
+                                    <span style="color: var(--snk-mist);">Subtotal</span>
+                                    <span th:text="${#numbers.formatDecimal(total, 1, 2)} + ' €'"></span>
+                                </div>
+                                <div class="d-flex justify-content-between snk-mt-2">
+                                    <span style="color: var(--snk-mist);">Envío</span>
+                                    <span th:if="${total &gt;= 50}"
+                                          style="color: var(--snk-volt); font-weight: 700;">GRATIS</span>
+                                    <span th:unless="${total &gt;= 50}">4,95 €</span>
+                                </div>
+                            </div>
+
+                            <!-- Progreso hasta envío gratis -->
+                            <div th:unless="${total &gt;= 50}"
+                                 class="snk-mt-4"
+                                 style="background: var(--snk-charcoal); border-radius: 10px; padding: 1rem;">
+                                <div class="text-mono" style="font-size: 0.75rem; color: var(--snk-mist); margin-bottom: 0.5rem;">
+                                    Te faltan
+                                    <strong style="color: var(--snk-volt);"
+                                            th:text="${#numbers.formatDecimal((50 - total), 1, 2)} + ' €'"></strong>
+                                    para envío gratis
+                                </div>
+                                <div style="background: var(--snk-graphite); height: 6px; border-radius: 10px; overflow: hidden;">
+                                    <div th:style="|width: ${total.doubleValue() >= 50 ? 100 : (total.doubleValue() / 50 * 100)}%; height: 100%; background: var(--snk-volt); transition: width 0.5s var(--easing);|"></div>
+                                </div>
+                            </div>
+
+                            <hr style="border-color: var(--snk-graphite); margin: 1.5rem 0;">
+
+                            <!-- Total grande -->
+                            <div class="d-flex justify-content-between align-items-baseline">
+                                <span class="text-tag" style="color: var(--snk-mist);">Total</span>
+                                <div>
+                                    <span th:if="${total &gt;= 50}"
+                                          class="text-mono"
+                                          style="font-size: 0.75rem; color: var(--snk-mist); margin-right: 0.4rem;">IVA incluido</span>
+                                    <strong style="font-family: var(--font-display); font-size: 2.5rem; color: var(--snk-volt); line-height: 1;"
+                                            th:text="${#numbers.formatDecimal(total, 1, 2)} + ' €'">0€</strong>
+                                </div>
+                            </div>
+
+                            <!-- CTA -->
+                            <div sec:authorize="isAuthenticated()" class="snk-mt-4">
+                                <a th:href="@{/checkout}" class="snk-btn snk-btn-primary w-100 justify-content-center"
+                                   style="padding: 1.2rem 2rem; font-size: 0.95rem;">
+                                    Finalizar compra <span class="arrow">→</span>
+                                </a>
+                            </div>
+                            <div sec:authorize="!isAuthenticated()" class="snk-mt-4">
+                                <a th:href="@{/login}" class="snk-btn snk-btn-primary w-100 justify-content-center"
+                                   style="padding: 1.2rem 2rem; font-size: 0.95rem;">
+                                    Iniciar sesión para comprar
+                                </a>
+                                <p class="snk-mt-2 text-mono text-center" style="font-size: 0.75rem; color: var(--snk-mist);">
+                                    ¿No tienes cuenta?
+                                    <a th:href="@{/register}" style="color: var(--snk-volt);">Regístrate</a>
+                                </p>
+                            </div>
+
+                            <!-- Garantías (trust badges) -->
+                            <div class="snk-mt-4" style="padding-top: 1.5rem; border-top: 1px solid var(--snk-graphite);">
+                                <div class="d-flex flex-column gap-2 text-mono" style="font-size: 0.75rem; color: var(--snk-mist);">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span style="color: var(--snk-volt);">✓</span>
+                                        <span>Pago seguro con cifrado SSL</span>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span style="color: var(--snk-volt);">✓</span>
+                                        <span>Devolución gratuita en 30 días</span>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span style="color: var(--snk-volt);">✓</span>
+                                        <span>Autenticidad 100% garantizada</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </aside>
+
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+
+<!-- Script para los +/- de cantidad -->
+<script>
+document.querySelectorAll('.qty-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+        const input = document.getElementById(btn.dataset.target);
+        if (!input) return;
+        let v = parseInt(input.value) || 1;
+        if (btn.dataset.action === 'inc' && v < 20) v++;
+        if (btn.dataset.action === 'dec' && v > 1) v--;
+        input.value = v;
+        input.form.submit();
+    });
+    btn.addEventListener('mouseover', () => {
+        btn.style.background = 'var(--snk-volt)';
+        btn.style.color = 'var(--snk-black)';
+    });
+    btn.addEventListener('mouseout', () => {
+        btn.style.background = 'var(--snk-white)';
+        btn.style.color = 'var(--snk-black)';
+    });
+});
+
+document.querySelectorAll('.cart-item-card').forEach(card => {
+    card.addEventListener('mouseover', () => {
+        card.style.transform = 'translateY(-2px)';
+        card.style.boxShadow = '0 8px 24px rgba(0,0,0,0.1)';
+    });
+    card.addEventListener('mouseout', () => {
+        card.style.transform = 'translateY(0)';
+        card.style.boxShadow = '0 2px 12px rgba(0,0,0,0.05)';
+    });
+});
+</script>
+
+</body>
+</html>

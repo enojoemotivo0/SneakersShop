@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle ?: 'Error'}, 'Algo ha fallado')}"></head>
+<body class="snk-grain">
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main>
+    <section class="snk-section" style="min-height: 60vh; display: flex; align-items: center;">
+        <div class="snk-container" style="text-align: center; max-width: 600px;">
+            <div style="font-family: var(--font-display); font-size: clamp(6rem, 20vw, 12rem); line-height: 0.9; color: var(--snk-black);"
+                 th:text="${errorCode ?: '404'}">404</div>
+            <h2 class="snk-mt-3">Algo <span class="accent">ha fallado</span></h2>
+            <p class="snk-mt-3" style="color: var(--snk-smoke);"
+               th:text="${errorMessage ?: 'La página que buscas no existe o ha sido movida.'}">
+                Error
+            </p>
+            <a th:href="@{/}" class="snk-btn snk-btn-dark snk-mt-4">
+                Volver a inicio <span class="arrow">→</span>
+            </a>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle}, 'Inicia sesión en Snikers Shop')}"></head>
+<body class="snk-grain">
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main>
+    <section class="snk-section" style="min-height: calc(100vh - 200px); display: flex; align-items: center;">
+        <div class="snk-container" style="max-width: 480px; width: 100%;">
+            <div class="snk-card">
+                <div class="snk-text-center snk-mb-4">
+                    <span class="text-tag" style="color: var(--snk-smoke);">Bienvenido de vuelta</span>
+                    <h1 style="font-size: 2.5rem; margin-top: 0.5rem;">Iniciar <span class="accent">sesión</span></h1>
+                </div>
+
+                <div th:if="${errorMessage}" class="snk-alert snk-alert-error" th:text="${errorMessage}"></div>
+                <div th:if="${successMessage}" class="snk-alert snk-alert-success" th:text="${successMessage}"></div>
+                <div th:if="${param.registered}" class="snk-alert snk-alert-success">
+                    ¡Cuenta creada! Ya puedes iniciar sesión.
+                </div>
+
+                <form th:action="@{/login}" method="post">
+                    <div class="snk-mb-3">
+                        <label class="snk-form-label">Email</label>
+                        <input type="email" name="email" required autofocus class="snk-form-control"
+                               placeholder="tu@email.com">
+                    </div>
+                    <div class="snk-mb-3">
+                        <label class="snk-form-label">Contraseña</label>
+                        <input type="password" name="password" required class="snk-form-control"
+                               placeholder="••••••••">
+                    </div>
+
+                    <button type="submit" class="snk-btn snk-btn-dark w-100 justify-content-center snk-mt-3">
+                        Entrar <span class="arrow">→</span>
+                    </button>
+                </form>
+
+                <div class="snk-text-center snk-mt-4 text-mono" style="font-size: 0.85rem; color: var(--snk-smoke);">
+                    ¿No tienes cuenta?
+                    <a th:href="@{/register}" style="color: var(--snk-black); font-weight: 700;">Regístrate aquí</a>
+                </div>
+
+                <div class="snk-mt-4" style="background: var(--snk-cream); border-radius: 6px; padding: 1rem; font-size: 0.8rem; font-family: var(--font-mono);">
+                    <strong style="display: block; margin-bottom: 0.5rem;">Credenciales de prueba:</strong>
+                    👤 Cliente: cliente@snikers.shop / cliente123<br>
+                    🛠️ Admin: admin@snikers.shop / admin1234
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

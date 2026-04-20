@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle}, 'Gestión de clientes y usuarios')}"></head>
+<body class="snk-grain">
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main>
+    <section class="snk-section">
+        <div class="snk-container">
+            <div class="snk-section-header">
+                <div>
+                    <span class="text-tag" style="color: var(--snk-red);">· Admin ·</span>
+                    <h1>Clientes & Usuarios</h1>
+                </div>
+            </div>
+
+            <nav th:replace="~{admin/admin-nav :: adminNav('users')}"></nav>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;" class="admin-cat-layout">
+                <!-- Lista -->
+                <div class="snk-card" style="padding: 0;">
+                    <table class="snk-table">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th>Registro</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="u : ${users}">
+                            <td class="fw-bold" th:text="'#' + ${u.id}"></td>
+                            <td th:text="${u.fullName}"></td>
+                            <td th:text="${u.email}"></td>
+                            <td th:text="${u.role}"></td>
+                            <td th:text="${#temporals.format(u.createdAt, 'dd/MM/yyyy')}"></td>
+                        </tr>
+                        <tr th:if="${users.isEmpty()}">
+                            <td colspan="5" style="text-align: center; padding: 2rem;">No hay clientes registrados aún.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Formulario -->
+                <div>
+                    <div class="snk-card sticky-top" style="top: 100px;">
+                        <h4 class="mb-4 text-uppercase fw-bold">Añadir Cliente</h4>
+
+                        <form th:action="@{/admin/users}" method="post" th:object="${user}">
+                            
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Nombre Completo *</label>
+                                <input type="text" class="form-control" th:field="*{fullName}" required>
+                                <span class="text-danger small" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Email *</label>
+                                <input type="email" class="form-control" th:field="*{email}" required>
+                                <span class="text-danger small" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Contraseña *</label>
+                                <input type="password" class="form-control" th:field="*{password}" required>
+                                <span class="text-danger small" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Teléfono</label>
+                                <input type="text" class="form-control" th:field="*{phone}">
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label small fw-bold">Dirección</label>
+                                <input type="text" class="form-control" th:field="*{address}">
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label small fw-bold">Rol *</label>
+                                <select class="form-select" th:field="*{role}">
+                                    <option value="CUSTOMER">Cliente</option>
+                                    <option value="ADMIN">Administrador</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="snk-btn snk-btn-dark w-100">Guardar Usuario</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <style>
+                @media (max-width: 900px) {
+                    .admin-cat-layout { grid-template-columns: 1fr !important; }
+                }
+            </style>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

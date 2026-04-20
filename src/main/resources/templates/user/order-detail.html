@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle}, 'Detalle de pedido')}"></head>
+<body class="snk-grain">
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main>
+    <section class="snk-section">
+        <div class="snk-container" style="max-width: 900px;">
+
+            <div th:if="${confirmed}" class="snk-alert snk-alert-success">
+                <strong>🎉 ¡Pedido confirmado!</strong> Hemos recibido tu pedido correctamente. Te enviaremos un email con el seguimiento.
+            </div>
+
+            <div class="snk-section-header">
+                <div>
+                    <span class="text-tag" th:text="'Pedido #' + ${order.orderNumber}">Pedido</span>
+                    <h1>Detalle del <span class="accent">pedido</span></h1>
+                    <p style="color: var(--snk-smoke); margin-top: 0.5rem;"
+                       th:text="'Realizado el ' + ${#temporals.format(order.createdAt, 'dd/MM/yyyy')} + ' a las ' + ${#temporals.format(order.createdAt, 'HH:mm')}"></p>
+                </div>
+                <span th:class="'snk-badge snk-badge-' + ${#strings.toLowerCase(order.status.name())}"
+                      style="font-size: 0.85rem; padding: 0.6rem 1rem;"
+                      th:text="${order.status.name()}">PENDING</span>
+            </div>
+
+            <div class="snk-card" style="padding: 0;">
+                <table class="snk-table">
+                    <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Talla</th>
+                        <th>Cantidad</th>
+                        <th>Precio</th>
+                        <th>Subtotal</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item : ${order.items}">
+                        <td>
+                            <div class="d-flex gap-3 align-items-center">
+                                <div style="width: 55px; height: 55px; background: linear-gradient(135deg,#f0ebe0,#e8e2d3); border-radius: 6px; overflow: hidden;">
+                                    <img th:src="${item.product.imageUrl}" th:alt="${item.product.name}"
+                                         style="width: 100%; height: 100%; object-fit: cover; mix-blend-mode: multiply;">
+                                </div>
+                                <div>
+                                    <div class="text-tag" style="color: var(--snk-smoke);" th:text="${item.product.brand}">Marca</div>
+                                    <strong style="font-family: var(--font-display); text-transform: uppercase;"
+                                            th:text="${item.product.name}">Producto</strong>
+                                </div>
+                            </div>
+                        </td>
+                        <td th:text="${item.size ?: '—'}">40</td>
+                        <td th:text="${item.quantity}">1</td>
+                        <td th:text="${#numbers.formatDecimal(item.unitPrice, 1, 2)} + ' €'">0€</td>
+                        <td><strong th:text="${#numbers.formatDecimal(item.subtotal, 1, 2)} + ' €'">0€</strong></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div style="padding: 1.25rem; border-top: 1px solid #f0ede5; display: flex; justify-content: space-between; align-items: baseline;">
+                    <strong>Total del pedido</strong>
+                    <strong class="snk-product-price" style="font-size: 1.75rem;"
+                            th:text="${#numbers.formatDecimal(order.total, 1, 2)} + ' €'">0€</strong>
+                </div>
+            </div>
+
+            <div class="snk-card snk-mt-3">
+                <h3 style="font-size: 1.1rem;">📦 Datos de entrega</h3>
+                <div class="snk-mt-3 d-flex flex-column gap-2" style="color: var(--snk-smoke);">
+                    <div>
+                        <strong style="color: var(--snk-black);">Cliente:</strong> <span th:text="${order.user.fullName}">Nombre</span><br>
+                        <strong style="color: var(--snk-black);">Correo:</strong> <span th:text="${order.user.email}">Correo</span><br>
+                        <strong style="color: var(--snk-black);" th:if="${order.user.phone}">Teléfono:</strong> <span th:if="${order.user.phone}" th:text="${order.user.phone}">Teléfono</span>
+                    </div>
+                    <div class="snk-mt-2">
+                        <strong style="color: var(--snk-black);">Dirección de envío:</strong><br>
+                        <span th:text="${order.shippingAddress}">Dirección</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="snk-mt-4 d-flex gap-2">
+                <a th:href="@{/orders}" class="snk-btn" style="background: var(--snk-cream); color: var(--snk-black);">← Mis pedidos</a>
+                <a th:href="@{/orders/{id}/invoice(id=${order.id})}" class="snk-btn snk-btn-primary" target="_blank">📄 Descargar Factura (PDF)</a>
+                <a th:href="@{/products}" class="snk-btn snk-btn-dark">Seguir comprando</a>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

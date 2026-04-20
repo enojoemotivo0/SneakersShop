@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head(${pageTitle}, ${pageDescription})}">
+</head>
+<body>
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<!-- ============================================================
+     HERO CAROUSEL — Bootstrap nativo + paleta volt
+     ============================================================ -->
+<section aria-label="Colecciones destacadas">
+    <div id="heroCarousel" class="carousel slide carousel-fade"
+         data-bs-ride="carousel" data-bs-interval="6000" data-bs-pause="hover">
+
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0"
+                    class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
+        </div>
+
+        <div class="carousel-inner">
+
+            <div class="carousel-item active">
+                <div style="height: 85vh; min-height: 560px; background-image: url('https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=1920'); background-color: #0a0a0a; background-size: cover; background-position: center; background-repeat: no-repeat;"></div>
+                <div class="carousel-caption text-start d-flex flex-column justify-content-center"
+                     style="top:0; bottom:0; left:0; right:0; background: linear-gradient(120deg, rgba(10,10,10,.85) 0%, rgba(10,10,10,.35) 50%, rgba(10,10,10,.05) 100%); padding: 3rem 6vw;">
+                    <div style="max-width: 680px;">
+                        <span class="text-tag" style="color: var(--snk-volt);">01 · Nueva colección</span>
+                        <h1 class="display-1 fw-bolder text-uppercase text-white mt-3 mb-3"
+                            style="font-family: var(--font-display); line-height: 0.88;">
+                            Corre<br>
+                            <span style="color: var(--snk-volt); font-style: italic; display: inline-block; transform: skewX(-6deg);">más rápido</span>
+                        </h1>
+                        <p class="fs-5 text-white-50 mb-4 d-none d-md-block" style="max-width: 520px;">
+                            La serie Velocity X2 llega con placa de fibra de carbono y espuma PEBA.
+                            Diseñada para romper tu récord personal.
+                        </p>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a th:href="@{/products(categoryId=1)}" class="snk-btn snk-btn-primary">Comprar ahora <span class="arrow">→</span></a>
+                            <a th:href="@{/products}" class="snk-btn snk-btn-ghost">Ver catálogo</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="carousel-item">
+                <div style="height: 85vh; min-height: 560px; background-image: url('https://images.pexels.com/photos/2385477/pexels-photo-2385477.jpeg?auto=compress&cs=tinysrgb&w=1920'); background-color: #0a0a0a; background-size: cover; background-position: center; background-repeat: no-repeat;"></div>
+                <div class="carousel-caption text-start d-flex flex-column justify-content-center"
+                     style="top:0; bottom:0; left:0; right:0; background: linear-gradient(120deg, rgba(10,10,10,.85) 0%, rgba(10,10,10,.35) 50%, rgba(10,10,10,.05) 100%); padding: 3rem 6vw;">
+                    <div style="max-width: 680px;">
+                        <span class="text-tag" style="color: var(--snk-volt);">02 · Court supremacy</span>
+                        <h1 class="display-1 fw-bolder text-uppercase text-white mt-3 mb-3"
+                            style="font-family: var(--font-display); line-height: 0.88;">
+                            Domina<br>
+                            <span style="color: var(--snk-volt); font-style: italic; display: inline-block; transform: skewX(-6deg);">la cancha</span>
+                        </h1>
+                        <p class="fs-5 text-white-50 mb-4 d-none d-md-block" style="max-width: 520px;">
+                            Sujeción total, tracción agresiva y placa de carbono.
+                            Las zapatillas que los pros eligen para el gran momento.
+                        </p>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a th:href="@{/products(categoryId=2)}" class="snk-btn snk-btn-primary">Explorar basket <span class="arrow">→</span></a>
+                            <a th:href="@{/products}" class="snk-btn snk-btn-ghost">Ver más</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="carousel-item">
+                <div style="height: 85vh; min-height: 560px; background-image: url('https://images.pexels.com/photos/1598505/pexels-photo-1598505.jpeg?auto=compress&cs=tinysrgb&w=1920'); background-color: #0a0a0a; background-size: cover; background-position: center; background-repeat: no-repeat;"></div>
+                <div class="carousel-caption text-start d-flex flex-column justify-content-center"
+                     style="top:0; bottom:0; left:0; right:0; background: linear-gradient(120deg, rgba(10,10,10,.85) 0%, rgba(10,10,10,.35) 50%, rgba(10,10,10,.05) 100%); padding: 3rem 6vw;">
+                    <div style="max-width: 680px;">
+                        <span class="text-tag" style="color: var(--snk-volt);">03 · Street icons</span>
+                        <h1 class="display-1 fw-bolder text-uppercase text-white mt-3 mb-3"
+                            style="font-family: var(--font-display); line-height: 0.88;">
+                            Clásicos<br>
+                            <span style="color: var(--snk-volt); font-style: italic; display: inline-block; transform: skewX(-6deg);">reinventados</span>
+                        </h1>
+                        <p class="fs-5 text-white-50 mb-4 d-none d-md-block" style="max-width: 520px;">
+                            Modelos icónicos hechos con materiales premium.
+                            Tu estilo, elevado. Desde el día a día hasta la noche.
+                        </p>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a th:href="@{/products(categoryId=3)}" class="snk-btn snk-btn-primary">Ver lifestyle <span class="arrow">→</span></a>
+                            <a th:href="@{/products}" class="snk-btn snk-btn-ghost">Colección</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="carousel-item">
+                <div style="height: 85vh; min-height: 560px; background-image: url('https://images.pexels.com/photos/1598508/pexels-photo-1598508.jpeg?auto=compress&cs=tinysrgb&w=1920'); background-color: #0a0a0a; background-size: cover; background-position: center; background-repeat: no-repeat;"></div>
+                <div class="carousel-caption text-start d-flex flex-column justify-content-center"
+                     style="top:0; bottom:0; left:0; right:0; background: linear-gradient(120deg, rgba(10,10,10,.85) 0%, rgba(10,10,10,.35) 50%, rgba(10,10,10,.05) 100%); padding: 3rem 6vw;">
+                    <div style="max-width: 680px;">
+                        <span class="text-tag" style="color: var(--snk-volt);">04 · Street hardware</span>
+                        <h1 class="display-1 fw-bolder text-uppercase text-white mt-3 mb-3"
+                            style="font-family: var(--font-display); line-height: 0.88;">
+                            Shred<br>
+                            <span style="color: var(--snk-volt); font-style: italic; display: inline-block; transform: skewX(-6deg);">everywhere</span>
+                        </h1>
+                        <p class="fs-5 text-white-50 mb-4 d-none d-md-block" style="max-width: 520px;">
+                            Suela vulcanizada, doble refuerzo en ollie area, durabilidad
+                            extrema. Hecha por skaters para skaters.
+                        </p>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a th:href="@{/products(categoryId=4)}" class="snk-btn snk-btn-primary">Ver skate <span class="arrow">→</span></a>
+                            <a th:href="@{/products}" class="snk-btn snk-btn-ghost">Descubrir</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Anterior</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Siguiente</span>
+        </button>
+    </div>
+
+    <!-- Ticker volt -->
+    <div class="snk-ticker" style="position: relative;">
+        <div class="snk-ticker-track">
+            <span class="snk-ticker-item">Envío gratis +50€</span>
+            <span class="snk-ticker-item">Devoluciones en 30 días</span>
+            <span class="snk-ticker-item">Autenticidad garantizada</span>
+            <span class="snk-ticker-item">Nuevos drops cada jueves</span>
+            <span class="snk-ticker-item">Envío gratis +50€</span>
+            <span class="snk-ticker-item">Devoluciones en 30 días</span>
+            <span class="snk-ticker-item">Autenticidad garantizada</span>
+            <span class="snk-ticker-item">Nuevos drops cada jueves</span>
+        </div>
+    </div>
+</section>
+
+<main>
+
+    <!-- CATEGORÍAS -->
+    <section class="snk-section" aria-labelledby="cat-title">
+        <div class="snk-container">
+            <div class="snk-section-header">
+                <div>
+                    <span class="text-tag">Explora por disciplina</span>
+                    <h2 id="cat-title">Encuentra<br><span class="accent">tu par</span></h2>
+                </div>
+                <a th:href="@{/products}" class="snk-link-arrow">Ver todo →</a>
+            </div>
+
+            <div class="snk-categories">
+                <a th:each="cat, iter : ${categories}"
+                   th:href="@{/products(categoryId=${cat.id})}"
+                   class="snk-category-card">
+                    <div class="snk-category-img"
+                         th:style="|background-image: url('${iter.index == 0 ? 'https://images.pexels.com/photos/1456706/pexels-photo-1456706.jpeg?auto=compress&cs=tinysrgb&w=800' :
+                                                          iter.index == 1 ? 'https://images.pexels.com/photos/2385478/pexels-photo-2385478.jpeg?auto=compress&cs=tinysrgb&w=800' :
+                                                          iter.index == 2 ? 'https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=800' :
+                                                                            'https://images.pexels.com/photos/1598507/pexels-photo-1598507.jpeg?auto=compress&cs=tinysrgb&w=800'}')|"></div>
+                    <span class="go-arrow">↗</span>
+                    <div class="snk-category-info">
+                        <h3 th:text="${cat.name}">Categoría</h3>
+                        <span class="count" th:text="${cat.products != null ? cat.products.size() + ' productos' : ''}">0 productos</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- DESTACADOS -->
+    <section class="snk-section" style="background: var(--snk-white);" aria-labelledby="feat-title">
+        <div class="snk-container">
+            <div class="snk-section-header">
+                <div>
+                    <span class="text-tag">Lo más buscado</span>
+                    <h2 id="feat-title">Sneakers<br><span class="accent">destacadas</span></h2>
+                </div>
+                <a th:href="@{/products}" class="snk-link-arrow">Ver todos →</a>
+            </div>
+
+            <div class="snk-products-grid">
+                <article th:each="product : ${featuredProducts}" class="snk-product-card">
+                    <a th:href="@{/products/{id}(id=${product.id})}" class="snk-product-img-wrap">
+                        <span class="snk-product-badge sale"
+                              th:if="${product.discountPercentage > 0}"
+                              th:text="'-' + ${product.discountPercentage} + '%'">-20%</span>
+                        <span class="snk-product-badge new"
+                              th:if="${product.discountPercentage == 0 and product.featured}">Nuevo</span>
+                        <img th:src="${product.imageUrl}" th:alt="${product.name}" class="snk-product-img" loading="lazy">
+                    </a>
+                    <div class="snk-product-body">
+                        <span class="snk-product-brand" th:text="${product.brand}">Marca</span>
+                        <h3 class="snk-product-title">
+                            <a th:href="@{/products/{id}(id=${product.id})}" th:text="${product.name}">Nombre</a>
+                        </h3>
+                        <span class="snk-product-meta"
+                              th:text="${product.color} + ' · ' + ${product.sizeRange}">Color · Tallas</span>
+
+                        <div class="snk-product-price-row">
+                            <div>
+                                <span class="snk-product-price-original"
+                                      th:if="${product.originalPrice != null and product.discountPercentage > 0}"
+                                      th:text="${#numbers.formatDecimal(product.originalPrice, 1, 2)} + ' €'"></span>
+                                <span class="snk-product-price"
+                                      th:text="${#numbers.formatDecimal(product.price, 1, 2)} + ' €'"></span>
+                            </div>
+                            <a th:href="@{/products/{id}(id=${product.id})}" class="snk-product-cta" aria-label="Ver producto">→</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA BANNER -->
+    <section class="snk-cta-banner" aria-labelledby="cta-title">
+        <div class="snk-container">
+            <span class="text-tag" style="color: var(--snk-volt); margin-bottom: 1rem; display: block;">
+                · Únete al club ·
+            </span>
+            <h2 id="cta-title">
+                Drops exclusivos.<br>
+                <span class="accent">Antes que nadie.</span>
+            </h2>
+            <p>Regístrate y recibe acceso anticipado a las colaboraciones limitadas,
+               descuentos solo para miembros y las guías de los expertos de Snikers.</p>
+            <a th:href="@{/register}" class="snk-btn snk-btn-primary">
+                Unirme ahora <span class="arrow">→</span>
+            </a>
+        </div>
+    </section>
+
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+
+</body>
+</html>

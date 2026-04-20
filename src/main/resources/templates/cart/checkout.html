@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle}, 'Finaliza tu compra en Snikers Shop')}"></head>
+<body class="snk-grain">
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main>
+    <section class="snk-section">
+        <div class="snk-container">
+            <div class="snk-section-header">
+                <div>
+                    <span class="text-tag">Último paso</span>
+                    <h1>Finalizar <span class="accent">compra</span></h1>
+                </div>
+            </div>
+
+            <form th:action="@{/checkout}" method="post">
+                <div class="row g-4">
+                    <div class="col-lg-7">
+                        <div class="snk-card">
+                            <h3 style="font-size: 1.3rem; margin-bottom: 1.5rem;">Datos de envío</h3>
+
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <label class="snk-form-label">Nombre completo *</label>
+                                    <input type="text" name="fullName" class="snk-form-control"
+                                           th:value="${user.fullName}" required>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="snk-form-label">Email</label>
+                                    <input type="email" name="email" class="snk-form-control"
+                                           th:value="${user.email}" required>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="snk-form-label">Teléfono</label>
+                                    <input type="tel" name="phone" class="snk-form-control"
+                                           th:value="${user.phone}">
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="snk-form-label">Dirección de envío *</label>
+                                    <textarea name="shippingAddress" class="snk-form-control" rows="3" required
+                                              th:text="${user.address}"></textarea>
+                                    <small class="text-mono snk-mt-1 d-block" style="color: var(--snk-smoke); font-size: 0.75rem;">
+                                        Revisa y completa tu dirección antes de confirmar
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="snk-card snk-mt-3">
+                            <h3 style="font-size: 1.3rem; margin-bottom: 1rem;">Método de pago</h3>
+                            <div style="background: var(--snk-cream); padding: 1rem; border-radius: 6px; font-family: var(--font-mono); font-size: 0.85rem;">
+                                💳 Contra reembolso (demo académica)
+                                <br>
+                                <small style="color: var(--snk-smoke);">Este proyecto no integra pasarela de pago real.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <aside class="col-lg-5">
+                        <div class="snk-card" style="background: var(--snk-black); color: var(--snk-white); position: sticky; top: 100px;">
+                            <span class="text-tag" style="color: var(--snk-volt);">Resumen</span>
+                            <h3 class="snk-mt-2" style="color: var(--snk-white); font-size: 1.5rem;">
+                                <span th:text="${items.size()}"></span> artículos
+                            </h3>
+                            
+                            <!-- Datos del cliente en el resumen -->
+                            <div class="snk-mt-3" style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 6px;">
+                                <strong style="color: var(--snk-volt); font-size: 0.85rem; display: block; margin-bottom: 0.5rem;">Datos del cliente</strong>
+                                <div style="font-size: 0.85rem; color: var(--snk-mist); font-family: var(--font-mono);">
+                                    <div th:text="${user.fullName}">Nombre</div>
+                                    <div th:text="${user.email}">Correo@ejemplo.com</div>
+                                    <div th:text="${user.phone}">Teléfono</div>
+                                </div>
+                            </div>
+
+                            <div class="snk-mt-4" style="max-height: 260px; overflow-y: auto;">
+                                <div th:each="item : ${items}"
+                                     style="display: flex; gap: 0.75rem; padding: 0.5rem 0; border-bottom: 1px solid var(--snk-graphite);">
+                                    <img th:src="${item.imageUrl}" th:alt="${item.name}"
+                                         style="width: 48px; height: 48px; object-fit: cover; border-radius: 4px; background: var(--snk-cream);">
+                                    <div style="flex: 1; font-size: 0.85rem;">
+                                        <strong th:text="${item.name}" style="display: block;">Nombre</strong>
+                                        <span class="text-mono" style="color: var(--snk-mist); font-size: 0.75rem;">
+                                            Talla <span th:text="${item.size}"></span> · x<span th:text="${item.quantity}"></span>
+                                        </span>
+                                    </div>
+                                    <strong th:text="${#numbers.formatDecimal(item.subtotal, 1, 2)} + ' €'"
+                                            style="font-family: var(--font-mono); font-size: 0.85rem;"></strong>
+                                </div>
+                            </div>
+
+                            <hr style="border-color: var(--snk-graphite); margin: 1.5rem 0;">
+
+                            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                                <span class="text-tag">Total</span>
+                                <strong style="font-family: var(--font-display); font-size: 2rem; color: var(--snk-volt);"
+                                        th:text="${#numbers.formatDecimal(total, 1, 2)} + ' €'">0€</strong>
+                            </div>
+
+                            <button type="submit" class="snk-btn snk-btn-primary w-100 justify-content-center snk-mt-4">
+                                Confirmar pedido <span class="arrow">→</span>
+                            </button>
+
+                            <p class="snk-mt-2 text-mono" style="font-size: 0.7rem; color: var(--snk-mist); text-align: center;">
+                                Al confirmar aceptas los términos de compra
+                            </p>
+                        </div>
+                    </aside>
+                </div>
+            </form>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

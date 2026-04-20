@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle}, ${pageDescription})}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main>
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="bg-light border-bottom">
+        <div class="container py-2">
+            <ol class="breadcrumb mb-0 small">
+                <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none text-muted">Inicio</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/products}" class="text-decoration-none text-muted">Catálogo</a></li>
+                <li class="breadcrumb-item">
+                    <a th:href="@{/products(categoryId=${product.category.id})}"
+                       class="text-decoration-none text-muted"
+                       th:text="${product.category.name}">Cat</a>
+                </li>
+                <li class="breadcrumb-item active text-dark fw-bold" aria-current="page" th:text="${product.name}">Producto</li>
+            </ol>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <div class="row g-5">
+            <!-- Imagen -->
+            <div class="col-lg-6">
+                <!-- Imagen con opción de ampliar y descargar -->
+                <div class="position-relative bg-light rounded-3 overflow-hidden text-center" style="height: 100%;">
+                    <span class="badge bg-danger position-absolute top-0 start-0 m-3 fs-6 px-3 py-2 z-1"
+                          th:if="${product.discountPercentage > 0}"
+                          th:text="'-' + ${product.discountPercentage} + '%'"></span>
+                    
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#imageModal">
+                        <div class="ratio ratio-1x1 h-100">
+                            <img th:src="${product.imageUrl}"
+                                 th:alt="${product.name}"
+                                 class="w-100 h-100"
+                                 style="object-fit: cover; cursor: zoom-in;"
+                                 id="mainProductImage">
+                        </div>
+                    </a>
+                </div>
+                
+                <div class="d-flex justify-content-center mt-3 gap-2">
+                    <button class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#imageModal">
+                        🔍 Ampliar foto
+                    </button>
+                    <a th:href="${product.imageUrl}" download="zapatilla.jpg" target="_blank" class="btn btn-dark">
+                        <i class="bi bi-download"></i> Descargar imagen
+                    </a>
+                </div>
+
+                <!-- Modal para ampliar la imagen -->
+                <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-xl">
+                        <div class="modal-content bg-transparent border-0">
+                            <div class="modal-header border-0 pb-0 justify-content-end">
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-center pt-0">
+                                <img th:src="${product.imageUrl}" class="img-fluid rounded" alt="Imagen ampliada del producto" style="max-height: 85vh;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info -->
+            <div class="col-lg-6">
+                <small class="text-uppercase text-muted fw-bold" th:text="${product.brand}">Marca</small>
+                <h1 class="display-5 fw-bold text-uppercase mt-2 mb-3" th:text="${product.name}">Nombre</h1>
+
+                <div class="mb-4">
+                    <span class="text-muted text-decoration-line-through me-2"
+                          th:if="${product.originalPrice != null and product.discountPercentage > 0}"
+                          th:text="${#numbers.formatDecimal(product.originalPrice, 1, 2)} + ' €'"></span>
+                    <span class="fs-2 fw-bold"
+                          th:text="${#numbers.formatDecimal(product.price, 1, 2)} + ' €'">0€</span>
+                </div>
+
+                <p class="lead text-secondary mb-4" th:text="${product.description}">Descripción</p>
+
+                <div class="mb-3">
+                    <small class="text-uppercase text-muted fw-bold">Color</small>
+                    <p class="mb-0 fw-bold" th:text="${product.color}">Color</p>
+                </div>
+
+                <form th:action="@{/cart/add}" method="post" class="mt-4">
+                    <input type="hidden" name="productId" th:value="${product.id}">
+
+                    <!-- Selector de tallas (arreglado: sin parseInt inline) -->
+                    <div class="mb-4" th:if="${product.sizeRange != null and !product.sizeRange.isEmpty() and product.sizeRange.contains('-')}">
+                        <small class="text-uppercase text-muted fw-bold d-block mb-2">Elige tu talla</small>
+
+                        <div class="row row-cols-4 row-cols-md-6 g-2" th:with="
+                            parts=${#strings.arraySplit(product.sizeRange, '-')},
+                            min=${T(java.lang.Integer).parseInt(parts[0].trim())},
+                            max=${T(java.lang.Integer).parseInt(parts[1].trim())}">
+                            <div class="col" th:each="s : ${#numbers.sequence(min, max)}">
+                                <input type="radio" class="btn-check" name="size" th:value="${s}" th:id="'size-' + ${s}" required>
+                                <label class="btn btn-outline-dark w-100" th:for="'size-' + ${s}" th:text="${s}">40</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4" style="max-width: 140px;">
+                        <label class="form-label small text-uppercase fw-bold text-muted">Cantidad</label>
+                        <input type="number" name="quantity" min="1" max="10" value="1"
+                               class="form-control" required>
+                    </div>
+
+                    <!-- Stock -->
+                    <p class="small mb-4">
+                        <span th:if="${product.stock > 10}" class="text-success fw-bold">● En stock</span>
+                        <span th:if="${product.stock <= 10 and product.stock > 0}" class="text-warning fw-bold">
+                            ● ¡Solo quedan <span th:text="${product.stock}"></span> unidades!
+                        </span>
+                        <span th:if="${product.stock == 0}" class="text-danger fw-bold">● Agotado</span>
+                    </p>
+
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button type="submit" class="btn btn-dark btn-lg fw-bold text-uppercase px-4"
+                                th:disabled="${product.stock == 0}">
+                            Añadir al carrito →
+                        </button>
+                        <a th:href="@{/products}" class="btn btn-outline-dark btn-lg fw-bold text-uppercase">
+                            Seguir viendo
+                        </a>
+                    </div>
+                </form>
+
+                <!-- Info extra -->
+                <div class="row mt-5 pt-4 border-top g-3 small">
+                    <div class="col-md-6">
+                        <strong class="text-uppercase text-muted d-block small">Envío</strong>
+                        Gratis en pedidos > 50€
+                    </div>
+                    <div class="col-md-6">
+                        <strong class="text-uppercase text-muted d-block small">Devoluciones</strong>
+                        30 días gratuitas
+                    </div>
+                    <div class="col-md-6">
+                        <strong class="text-uppercase text-muted d-block small">Autenticidad</strong>
+                        100% garantizada
+                    </div>
+                    <div class="col-md-6">
+                        <strong class="text-uppercase text-muted d-block small">Categoría</strong>
+                        <span th:text="${product.category.name}">Cat</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>
