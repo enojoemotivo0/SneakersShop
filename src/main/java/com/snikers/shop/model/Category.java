@@ -1,4 +1,4 @@
-package com.snikers.shop.model;
+package com.snikers.shop.model; // Carpeta virtual donde definimos "cómo son las cosas" en la tienda (modelos).
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,32 +22,32 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * Categoría de sneakers (ej: Running, Basketball, Lifestyle, Skate).
- * Relación 1:N con Product.
+ * Este archivo define qué es una "Categoría" en nuestra tienda (Ej: Running, Baloncesto).
+ * Imagínate que es como crear la ficha o el molde con el que fabricaremos todas las categorías.
  */
-@Entity
-@Table(name = "categorias")
-@Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class Category {
+@Entity // Le dice al programa: "Crea una tabla en la base de datos para guardar esto"
+@Table(name = "categorias") // El nombre del cajón o "tabla" en la base de datos será "categorias"
+@Getter @Setter // Magia para "leer" y "escribir" información en esta ficha sin teclear tanto código.
+@NoArgsConstructor // Magia para poder crear una categoría en blanco.
+@AllArgsConstructor // Magia para crear una categoría pasando todos los datos de golpe.
+@Builder // Magia para construir categorías paso a paso (nombre="Running", descripcion="Para correr").
+public class Category { // El molde de la Categoría.
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Id // Este dato es el "Número de DNI" o identificador único de la categoría. No puede haber dos iguales.
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Le decimos: "Dale tú solo el siguiente número automáticamente (1, 2, 3...)".
+    private Long id; // Aquí guardamos su número DNI interno.
 
-    @NotBlank(message = "El nombre de la categoría es obligatorio")
-    @Size(min = 2, max = 50, message = "El nombre debe tener entre 2 y 50 caracteres")
-    @Column(nullable = false, unique = true, length = 50)
-    private String name;
+    @NotBlank(message = "El nombre de la categoría es obligatorio") // Regla: no pueden dejar el nombre vacío o en blanco.
+    @Size(min = 2, max = 50, message = "El nombre debe tener entre 2 y 50 caracteres") // Regla de tamaño máximo/mínimo.
+    @Column(name = "nombre", nullable = false, unique = true, length = 50) // En la base de datos, este texto es obligatorio (no nulo) y único.
+    private String name; // Aquí guardamos el nombre real de la categoría.
 
-    @Size(max = 255)
-    @Column(length = 255)
-    private String description;
+    @Size(max = 255) // Solo permitimos descripciones breves (255 letras máximo).
+    @Column(name = "descripcion", length = 255) // Avisamos a la base de datos del tamaño máximo.
+    private String description; // Aquí guardamos la descripción ("Ideal para correr largas distancias...").
 
-    @Column(length = 100)
-    private String slug;
+    @Column(name = "url_amigable", length = 100) 
+    private String slug; // Aquí guardamos el texto que se pone arriba en el navegador (ejemplo: "super-zapatillas-running")
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude

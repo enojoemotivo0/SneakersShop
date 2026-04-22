@@ -43,11 +43,11 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 20)
+    @Column(name = "numero_pedido", nullable = false, unique = true, length = 20)
     private String orderNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "usuario_id", nullable = false)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private User user;
@@ -58,18 +58,18 @@ public class Order {
     @Builder.Default
     private List<OrderItem> items = new ArrayList<>();
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(name = "total", nullable = false, precision = 10, scale = 2)
     private BigDecimal total;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
+    @Column(name = "estado", nullable = false, length = 20)
     @Builder.Default
-    private Status status = Status.PENDING;
+    private Status status = Status.PENDIENTE;
 
-    @Column(length = 255)
+    @Column(name = "direccion_envio", length = 255)
     private String shippingAddress;
 
-    @Column(nullable = false, updatable = false)
+    @Column(name = "fecha_creacion", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @PrePersist
@@ -81,6 +81,6 @@ public class Order {
     }
 
     public enum Status {
-        PENDING, PAID, SHIPPED, DELIVERED, CANCELLED
+        PENDIENTE, PAGADO, ENVIADO, ENTREGADO, CANCELADO
     }
 }

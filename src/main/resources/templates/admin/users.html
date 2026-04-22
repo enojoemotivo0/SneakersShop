@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: head(${pageTitle}, 'Gestión de clientes y usuarios')}"></head>
+<head th:replace="~{fragments/layout :: head(${pageTitle}, 'Gestiï¿½n de clientes y usuarios')}"></head>
 <body class="snk-grain">
 
 <header th:replace="~{fragments/layout :: navbar}"></header>
@@ -10,7 +10,7 @@
         <div class="snk-container">
             <div class="snk-section-header">
                 <div>
-                    <span class="text-tag" style="color: var(--snk-red);">· Admin ·</span>
+                    <span class="text-tag" style="color: var(--snk-red);">ï¿½ Admin ï¿½</span>
                     <h1>Clientes & Usuarios</h1>
                 </div>
             </div>
@@ -24,6 +24,7 @@
                         <thead>
                         <tr>
                             <th>ID</th>
+                            <th>Foto</th>
                             <th>Nombre</th>
                             <th>Email</th>
                             <th>Rol</th>
@@ -31,15 +32,25 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="u : ${users}">
+                        <tr th:each="u : ${users}" style="vertical-align: middle;">
                             <td class="fw-bold" th:text="'#' + ${u.id}"></td>
+                            <td>
+                                <img th:if="${u.profilePicture != null}" 
+                                     th:src="${u.profilePicture}" 
+                                     alt="Perfil" 
+                                     style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd;">
+                                <svg th:unless="${u.profilePicture != null}" xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#ccc" class="bi bi-person-circle" viewBox="0 0 16 16">
+                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                                    <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+                                </svg>
+                            </td>
                             <td th:text="${u.fullName}"></td>
                             <td th:text="${u.email}"></td>
-                            <td th:text="${u.role}"></td>
+                            <td th:text="${u.role.name() == 'ADMIN' ? 'Administrador' : 'Cliente'}"></td>
                             <td th:text="${#temporals.format(u.createdAt, 'dd/MM/yyyy')}"></td>
                         </tr>
                         <tr th:if="${users.isEmpty()}">
-                            <td colspan="5" style="text-align: center; padding: 2rem;">No hay clientes registrados aún.</td>
+                            <td colspan="5" style="text-align: center; padding: 2rem;">No hay clientes registrados aï¿½n.</td>
                         </tr>
                         </tbody>
                     </table>
@@ -48,9 +59,9 @@
                 <!-- Formulario -->
                 <div>
                     <div class="snk-card sticky-top" style="top: 100px;">
-                        <h4 class="mb-4 text-uppercase fw-bold">Añadir Cliente</h4>
+                        <h4 class="mb-4 text-uppercase fw-bold">AÃ±adir Cliente</h4>
 
-                        <form th:action="@{/admin/users}" method="post" th:object="${user}">
+                        <form th:action="@{/admin/users}" method="post" th:object="${user}" enctype="multipart/form-data">
                             
                             <div class="mb-3">
                                 <label class="form-label small fw-bold">Nombre Completo *</label>
@@ -65,19 +76,25 @@
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label small fw-bold">Contraseña *</label>
+                                <label class="form-label small fw-bold">ContraseÃ±a *</label>
                                 <input type="password" class="form-control" th:field="*{password}" required>
                                 <span class="text-danger small" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
                             </div>
                             
                             <div class="mb-3">
-                                <label class="form-label small fw-bold">Teléfono</label>
+                                <label class="form-label small fw-bold">TelÃ©fono</label>
                                 <input type="text" class="form-control" th:field="*{phone}">
                             </div>
 
                             <div class="mb-4">
-                                <label class="form-label small fw-bold">Dirección</label>
+                                <label class="form-label small fw-bold">DirecciÃ³n</label>
                                 <input type="text" class="form-control" th:field="*{address}">
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label small fw-bold">Foto de Perfil</label>
+                                <input type="file" class="form-control" name="photoFile" accept="image/*">
+                                <small class="text-muted d-block mt-1">Opcional. Se mostrarÃ¡ en el avatar de la barra superior.</small>
                             </div>
 
                             <div class="mb-4">

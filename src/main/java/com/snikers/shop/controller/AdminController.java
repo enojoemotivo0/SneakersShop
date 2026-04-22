@@ -1,5 +1,8 @@
 package com.snikers.shop.controller;
 
+import java.io.IOException;
+import java.util.Base64;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -9,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.snikers.shop.model.Category;
 import com.snikers.shop.model.Order;
@@ -155,15 +159,24 @@ public class AdminController {
     @PostMapping("/users")
     public String saveUser(@Valid @ModelAttribute("user") User user,
                            BindingResult bindingResult,
+                           @RequestParam(value = "photoFile", required = false) MultipartFile photoFile,
                            Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("users", userRepository.findAll());
             return "admin/users";
         }
         try {
+            if (photoFile != null && !photoFile.isEmpty()) {
+                String base64Image = Base64.getEncoder().encodeToString(photoFile.getBytes());
+                user.setProfilePicture("data:" + photoFile.getContentType() + ";base64," + base64Image);
+            }
             userService.register(user);
         } catch(IllegalArgumentException e) {
             bindingResult.rejectValue("email", "error.user", e.getMessage());
+            model.addAttribute("users", userRepository.findAll());
+            return "admin/users";
+        } catch(IOException e) {
+            model.addAttribute("errorMessage", "Error al procesar la foto de perfil.");
             model.addAttribute("users", userRepository.findAll());
             return "admin/users";
         }

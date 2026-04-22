@@ -10,6 +10,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import java.util.Base64;
+import java.io.IOException;
 
 @Controller
 @RequiredArgsConstructor
@@ -47,15 +50,24 @@ public class AuthController {
     @PostMapping("/register")
     public String register(@Valid @ModelAttribute("user") User user,
                            BindingResult bindingResult,
+                           @RequestParam(value = "photoFile", required = false) MultipartFile photoFile,
                            Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("pageTitle", "Crear cuenta — SNIKERS");
             return "auth/register";
         }
         try {
+            if (photoFile != null && !photoFile.isEmpty()) {
+                String base64Image = Base64.getEncoder().encodeToString(photoFile.getBytes());
+                user.setProfilePicture("data:" + photoFile.getContentType() + ";base64," + base64Image);
+            }
             userService.register(user);
         } catch (IllegalArgumentException ex) {
             bindingResult.rejectValue("email", "email.duplicate", ex.getMessage());
+            model.addAttribute("pageTitle", "Crear cuenta — SNIKERS");
+            return "auth/register";
+        } catch (IOException ex) {
+            model.addAttribute("errorMessage", "Error al procesar la foto de perfil.");
             model.addAttribute("pageTitle", "Crear cuenta — SNIKERS");
             return "auth/register";
         }

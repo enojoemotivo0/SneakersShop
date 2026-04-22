@@ -39,7 +39,7 @@ public class UserService implements UserDetailsService {
             throw new IllegalArgumentException("Ya existe un usuario con ese email");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        if (user.getRole() == null) user.setRole(User.Role.CUSTOMER);
+        if (user.getRole() == null) user.setRole(User.Role.CLIENTE);
         return userRepository.save(user);
     }
 

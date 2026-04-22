@@ -97,7 +97,7 @@ h3 { font-size: clamp(1.5rem, 3vw, 2.5rem); }
 .snk-navbar {
     position: sticky;
     top: 0;
-    z-index: 1000;
+    z-index: 1030;
     background: var(--snk-black);
     color: var(--snk-white);
     border-bottom: 1px solid var(--snk-charcoal);

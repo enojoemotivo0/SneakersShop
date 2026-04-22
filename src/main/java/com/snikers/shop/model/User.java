@@ -44,33 +44,37 @@ public class User {
 
     @NotBlank(message = "El nombre es obligatorio")
     @Size(min = 2, max = 80)
-    @Column(nullable = false, length = 80)
+    @Column(name = "nombre_completo", nullable = false, length = 80)
     private String fullName;
 
     @NotBlank(message = "El email es obligatorio")
     @Email(message = "El email no tiene un formato válido")
-    @Column(nullable = false, unique = true, length = 120)
+    @Column(name = "correo", nullable = false, unique = true, length = 120)
     private String email;
 
     @NotBlank
     @Size(min = 8, message = "La contraseña debe tener al menos 8 caracteres")
-    @Column(nullable = false, length = 120)
+    @Column(name = "contrasena", nullable = false, length = 120)
     private String password; // Almacenada con BCrypt
 
     @Size(max = 20)
-    @Column(length = 20)
+    @Column(name = "telefono", length = 20)
     private String phone;
 
     @Size(max = 255)
-    @Column(length = 255)
+    @Column(name = "direccion", length = 255)
     private String address;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    @Builder.Default
-    private Role role = Role.CUSTOMER;
+    @jakarta.persistence.Lob
+    @Column(name = "foto_perfil", columnDefinition = "MEDIUMTEXT")
+    private String profilePicture; // Foto de perfil en Base64
 
-    @Column(nullable = false, updatable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "rol", nullable = false, length = 20)
+    @Builder.Default
+    private Role role = Role.CLIENTE;
+
+    @Column(name = "fecha_creacion", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
@@ -85,6 +89,6 @@ public class User {
     }
 
     public enum Role {
-        CUSTOMER, ADMIN
+        CLIENTE, ADMINISTRADOR
     }
 }
