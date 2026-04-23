@@ -17,7 +17,7 @@
             this.totalEl = root.querySelector('.snk-slide-counter .total');
             this.current = 0;
             this.interval = null;
-            this.duration = 6000; // 6s por slide
+            this.duration = 4000; // 4s por slide
             this.isTransitioning = false;
 
             if (this.slides.length === 0) return;
