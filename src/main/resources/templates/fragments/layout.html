@@ -56,10 +56,10 @@
                         <span th:text="${#strings.substringBefore(currentUser.fullName, ' ')}">CUENTA</span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end" style="border-radius: 0; border: 1px solid #2a2a2a;">
-                        <li sec:authorize="hasRole('ADMIN')">
+                        <li sec:authorize="hasRole('ADMINISTRADOR')">
                             <a class="dropdown-item" th:href="@{/admin}">Panel Admin</a>
                         </li>
-                        <li sec:authorize="hasRole('ADMIN')">
+                        <li sec:authorize="hasRole('ADMINISTRADOR')">
                             <a class="dropdown-item" th:href="@{/admin/users}">Clientes</a>
                         </li>
                         <li><a class="dropdown-item" th:href="@{/orders}">Mis pedidos</a></li>

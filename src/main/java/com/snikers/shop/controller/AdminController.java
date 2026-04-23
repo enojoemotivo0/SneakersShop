@@ -85,12 +85,24 @@ public class AdminController {
     public String saveProduct(@Valid @ModelAttribute("product") Product product,
                               BindingResult bindingResult,
                               @RequestParam Long categoryId,
+                              @RequestParam(value = "photoFile", required = false) org.springframework.web.multipart.MultipartFile photoFile,
                               Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("categories", categoryService.findAll());
             model.addAttribute("pageTitle", "Nuevo producto");
             return "admin/product-form";
         }
+        
+        if (photoFile != null && !photoFile.isEmpty()) {
+            try {
+                String base64Image = java.util.Base64.getEncoder().encodeToString(photoFile.getBytes());
+                product.setImageUrl("data:" + photoFile.getContentType() + ";base64," + base64Image);
+            } catch (java.io.IOException e) {
+                // Ignore silent update error when trying to parse image bytes
+                System.err.println("Error procesando imagen: " + e.getMessage());
+            }
+        }
+        
         product.setCategory(categoryService.findById(categoryId));
         if (product.getId() == null) {
             productService.save(product);

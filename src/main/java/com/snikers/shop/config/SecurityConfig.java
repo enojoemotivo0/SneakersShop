@@ -65,7 +65,7 @@ public class SecurityConfig {
                                 "/h2-console/**", "/api/public/**"
                         ).permitAll()
                         // 2. Zona de empleados. Pide expresamente el rol "ADMIN"
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**").hasRole("ADMINISTRADOR")
                         // 3. El carrito. De momento dejamos que la gente meta cosas sin registrarse.
                         .requestMatchers("/cart/**").permitAll()
                         // 4. Secciones privadas. Pagar y ver el panel de tu perfil exige registrarse primero.

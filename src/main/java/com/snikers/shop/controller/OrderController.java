@@ -56,7 +56,7 @@ public class OrderController {
         Order order = orderService.findById(id);
         User user = userService.findByEmail(userDetails.getUsername());
         // Solo el dueño o un admin pueden ver un pedido
-        if (!order.getUser().getId().equals(user.getId()) && user.getRole() != User.Role.ADMIN) {
+        if (!order.getUser().getId().equals(user.getId()) && user.getRole() != User.Role.ADMINISTRADOR) {
             return "redirect:/";
         }
         model.addAttribute("order", order);
@@ -71,7 +71,7 @@ public class OrderController {
         User user = userService.findByEmail(userDetails.getUsername());
         
         // Solo el dueÃ±o o un admin pueden descargar la factura
-        if (!order.getUser().getId().equals(user.getId()) && user.getRole() != User.Role.ADMIN) {
+        if (!order.getUser().getId().equals(user.getId()) && user.getRole() != User.Role.ADMINISTRADOR) {
             return ResponseEntity.status(403).build();
         }
 

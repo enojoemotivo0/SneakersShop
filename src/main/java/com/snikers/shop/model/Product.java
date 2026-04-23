@@ -78,8 +78,8 @@ public class Product {
     @Column(name = "cantidad_stock", nullable = false)
     private Integer stock; // Las unidades que sobran en la trastienda.
 
-    @Size(max = 255)
-    @Column(name = "url_imagen", length = 255)
+    @jakarta.persistence.Lob
+    @Column(name = "url_imagen", columnDefinition = "MEDIUMTEXT")
     private String imageUrl;
 
     @Size(max = 30)
