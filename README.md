@@ -18,7 +18,7 @@
 - **Programación** — backend en Java + Spring Boot
 - **Bases de Datos** — MySQL 8 con 5 tablas relacionadas
 - **Lenguaje de Marcas + SEO** — Thymeleaf, Bootstrap 5 y meta tags
-- **Sistemas Informáticos** — despliegue con Docker Compose
+- **Sistemas Informáticos** — configuración de máquinas virtuales y bases de datos locales
 - **Entornos de Desarrollo** — Git, versionado, documentación
 
 ---
@@ -35,7 +35,6 @@
 | Framework CSS | Bootstrap 5.3 + CSS propio |
 | Base de datos | MySQL 8.0 (producción) / H2 (dev) |
 | Build | Maven 3.9 |
-| Contenedores | Docker + Docker Compose |
 | Validación | Bean Validation (Jakarta) |
 | Utilidades | Lombok |
 
@@ -234,32 +233,9 @@ snikers-shop/
 │   ├── diagrama-er.md                # modelo entidad-relación
 │   ├── diagrama-clases.md            # UML de clases
 │   └── documentacion-tecnica.md      # documentación completa
-├── Dockerfile                        # imagen multi-stage
-├── docker-compose.yml                # app + MySQL + phpMyAdmin
 ├── pom.xml                           # dependencias Maven
 └── README.md
 ```
-
----
-
-## 🐳 Docker: detalles técnicos
-
-`docker-compose.yml` define 3 servicios en una red aislada (`snikers-net`):
-
-1. **db** — MySQL 8.0
-   - Volumen persistente `snikers-db-data`
-   - Scripts de inicialización (`schema.sql`, `data.sql`)
-   - Healthcheck con `mysqladmin ping`
-
-2. **app** — Spring Boot
-   - Build multi-stage (JDK para compilar, JRE Alpine para ejecutar)
-   - Usuario no-root dentro del contenedor
-   - `depends_on` con `condition: service_healthy` para esperar a la BD
-   - Healthcheck HTTP contra el endpoint raíz
-
-3. **phpmyadmin** — Interfaz web de MySQL
-   - Accesible en http://localhost:8081
-   - Útil para debugging durante la defensa
 
 ---
 
