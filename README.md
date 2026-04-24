@@ -1,20 +1,19 @@
 # 👟 SNIKERS SHOP
 
-> Tienda premium de sneakers construida con Spring Boot · Thymeleaf · MySQL · Docker
+> Tienda premium de sneakers construida con Spring Boot · Thymeleaf · MySQL
 
 **Proyecto Transversal Final** · 2º DAM/DAW · Curso 2025-2026
 
 ![Java](https://img.shields.io/badge/Java-17-orange)
 ![Spring](https://img.shields.io/badge/Spring_Boot-3.2-green)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0-blue)
-![Docker](https://img.shields.io/badge/Docker-Ready-2496ED)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ---
 
 ## 📋 Descripción
 
-**Snikers Shop** es un e-commerce monolítico especializado en sneakers premium, diseñado como simulación real de un entorno profesional. El proyecto integra los 5 módulos del ciclo formativo:
+**Snikers Shop** es un e-commerce monolítico especializado en sneakers premium, diseñado como simulación real de un entorno profesional. El proyecto integra los módulos del ciclo formativo:
 
 - **Programación** — backend en Java + Spring Boot
 - **Bases de Datos** — MySQL 8 con 5 tablas relacionadas
@@ -69,49 +68,78 @@ Ver los diagramas completos en [`docs/diagrama-er.md`](docs/diagrama-er.md) y [`
 
 ---
 
-## ⚙️ Instalación y despliegue
+## 🚀 Guía de Instalación y Uso
 
-### Opción A: con Docker (recomendada)
+Dado que este proyecto no utiliza Docker, la base de datos MySQL debe estar instalada y ejecutándose de forma nativa en el sistema anfitrión.
 
-Requiere tener instalado **Docker** y **Docker Compose**.
+### Opción A: Ejecución en Windows (Local o VM)
 
-```bash
-# 1. Clonar el repositorio
-git clone https://github.com/<tu-usuario>/snikers-shop.git
-cd snikers-shop
+**Requisitos previos:**
+- Java Development Kit (JDK) 17 o superior.
+- Git instalado.
+- Servidor MySQL (se recomienda usar **XAMPP** o **WAMP** para mayor facilidad).
+- Maven (Opcional, se recomienda ejecutar desde el IDE como VS Code o Eclipse).
 
-# 2. Levantar todo el stack (app + MySQL + phpMyAdmin)
-docker-compose up --build -d
+**Pasos:**
+1. Inicia tu servidor MySQL (por ejemplo, arrancando el módulo MySQL en el panel de control de XAMPP/WAMP).
+2. Entra a phpMyAdmin (`http://localhost/phpmyadmin`) o usa tu cliente SQL preferido y crea una base de datos vacía llamada `tienda`.
+3. Clona el repositorio en tu ordenador:
+   ```bash
+   git clone <URL_DEL_REPOSITORIO>
+   cd Sneaker-shop2
+   ```
+4. Abre la carpeta del proyecto en tu IDE (por ejemplo, Visual Studio Code).
+5. Abre el archivo `SnikersShopApplication.java` y haz clic en el botón **Run** (o Start Debugging) que ofrece el IDE para iniciar la aplicación Spring Boot.
+6. La aplicación conectará automáticamente con MySQL, creará las tablas necesarias en la base de datos `tienda` e insertará datos iniciales.
+7. Abre tu navegador y accede a `http://localhost:8080`.
 
-# 3. Verificar que los contenedores están sanos
-docker-compose ps
-```
+---
 
-Acceso a los servicios:
+### Opción B: Ejecución en Máquina Virtual Linux (Ubuntu/Debian)
 
-| Servicio | URL | Notas |
-|----------|-----|-------|
-| 🛒 Tienda | http://localhost:8080 | Aplicación principal |
-| 🔐 Admin | http://localhost:8080/admin | Login con admin@snikers.shop |
-| 🗄️ phpMyAdmin | http://localhost:8081 | Inspección de la BD |
-| 🐬 MySQL | localhost:3307 | Conexión directa (expuesto en 3307 para no chocar con MySQL nativo) |
+**Requisitos previos:**
+Una máquina virtual Linux con una terminal de comandos y acceso a internet.
 
-Para detener todo:
+**Pasos:**
 
-```bash
-docker-compose down           # conserva los datos
-docker-compose down -v        # borra también el volumen de la BD
-```
+1. **Actualiza el sistema e instala las dependencias necesarias** (Git, Java 17, MySQL Server y Maven):
+   ```bash
+   sudo apt update
+   sudo apt install git openjdk-17-jdk mysql-server maven -y
+   ```
 
-### Opción B: local sin Docker (perfil dev con H2)
+2. **Inicia y configura la base de datos MySQL**:
+   Asegúrate de que el servicio esté corriendo:
+   ```bash
+   sudo systemctl start mysql
+   sudo systemctl enable mysql
+   ```
+   Entra a la consola de MySQL:
+   ```bash
+   sudo mysql -u root
+   ```
+   Dentro de la consola de MySQL, crea la base de datos y configurala (ajusta el usuario/contraseña si tu `application-dev.properties` los requiere, por defecto la app usa usuario `root` sin contraseña en el entorno local, lo cual puedes cambiar según tu configuración):
+   ```sql
+   CREATE DATABASE tienda;
+   -- Si necesitas ponerle contraseña al root para que coincida con tu properties:
+   ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '';
+   FLUSH PRIVILEGES;
+   EXIT;
+   ```
 
-```bash
-./mvnw spring-boot:run
-# o en Windows:
-mvnw.cmd spring-boot:run
-```
+3. **Clona el repositorio**:
+   ```bash
+   git clone <URL_DEL_REPOSITORIO>
+   cd Sneaker-shop2
+   ```
 
-La aplicación arranca en http://localhost:8080 usando una BD H2 en memoria. Ideal para pruebas rápidas.
+4. **Ejecuta la aplicación usando Maven**:
+   ```bash
+   mvn spring-boot:run
+   ```
+
+5. La aplicación descargará las librerías necesarias, compilará el código y levantará el servidor en el puerto 8080.
+6. Accede a través del navegador de la máquina virtual (o desde tu máquina anfitriona si los puertos de la VM están ruteados) a: `http://localhost:8080` o `http://<IP_DE_LA_MAQUINA_VIRTUAL>:8080`.
 
 ---
 
