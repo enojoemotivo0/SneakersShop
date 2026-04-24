@@ -67,12 +67,11 @@ public class CheckoutController {
             user.setPhone(phone);
             updated = true;
         }
+        boolean emailUpdated = false;
         if (email != null && !email.isBlank() && !email.equals(user.getEmail())) {
-            // Nota: Si el email se usa para el login y se cambia aquí, 
-            // la sesión de Spring Security actual mantiene el nombre de usuario antiguo.
-            // En una aplicación real habría que forzar la reautenticación u actualizar el principal.
             user.setEmail(email);
             updated = true;
+            emailUpdated = true;
         }
         if (shippingAddress != null && !shippingAddress.isBlank() && !shippingAddress.equals(user.getAddress())) {
             user.setAddress(shippingAddress);
@@ -81,6 +80,15 @@ public class CheckoutController {
         
         if (updated) {
             userService.update(user);
+            if (emailUpdated) {
+                org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(
+                        new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
+                                userService.loadUserByUsername(email), 
+                                org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getCredentials(), 
+                                org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                        )
+                );
+            }
         }
         
         Order order = orderService.createFromCart(user, cartService.getItems(), shippingAddress);
