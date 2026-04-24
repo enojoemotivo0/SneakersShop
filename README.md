@@ -67,78 +67,96 @@ Ver los diagramas completos en [`docs/diagrama-er.md`](docs/diagrama-er.md) y [`
 
 ---
 
-## 🚀 Guía de Instalación y Uso
+## 🚀 Guía de Instalación y Despliegue
 
-Dado que este proyecto no utiliza Docker, la base de datos MySQL debe estar instalada y ejecutándose de forma nativa en el sistema anfitrión.
+Dado que este proyecto **no utiliza contenedores**, depende de que tengas los servicios instalados nativamente en tu sistema. A continuación, se detallan dos métodos completos de ejecución, dependiendo del entorno que vayas a usar.
 
-### Opción A: Ejecución en Windows (Local o VM)
+### 🪟 Opción A: Ejecución en Windows (Entorno Local o Máquina Virtual)
 
-**Requisitos previos:**
-- Java Development Kit (JDK) 17 o superior.
-- Git instalado.
-- Servidor MySQL (se recomienda usar **XAMPP** o **WAMP** para mayor facilidad).
-- Maven (Opcional, se recomienda ejecutar desde el IDE como VS Code o Eclipse).
+Este es el proceso recomendado para desarrollar o ejecutar el proyecto en un ordenador con Windows, apoyándose en herramientas visuales.
 
-**Pasos:**
-1. Inicia tu servidor MySQL (por ejemplo, arrancando el módulo MySQL en el panel de control de XAMPP/WAMP).
-2. Entra a phpMyAdmin (`http://localhost/phpmyadmin`) o usa tu cliente SQL preferido y crea una base de datos vacía llamada `tienda`.
-3. Clona el repositorio en tu ordenador:
-   ```bash
-   git clone <URL_DEL_REPOSITORIO>
-   cd Sneaker-shop2
-   ```
-4. Abre la carpeta del proyecto en tu IDE (por ejemplo, Visual Studio Code).
-5. Abre el archivo `SnikersShopApplication.java` y haz clic en el botón **Run** (o Start Debugging) que ofrece el IDE para iniciar la aplicación Spring Boot.
-6. La aplicación conectará automáticamente con MySQL, creará las tablas necesarias en la base de datos `tienda` e insertará datos iniciales.
-7. Abre tu navegador y accede a `http://localhost:8080`.
+**0. Requisitos indispensables:**
+- **JDK 17** (Java Development Kit) instalado y configurado en el `PATH` del sistema.
+- **Git** instalado para clonar el código.
+- **XAMPP** o **WAMP Server** instalados (nos proporcionarán MySQL y phpMyAdmin de forma sencilla).
+- Un IDE como **Visual Studio Code** o **IntelliJ IDEA**.
+
+**Pasos de ejecución:**
+
+1. **Levantar el servidor web y la Base de Datos:**
+   * Abre el Panel de Control de XAMPP (o WAMP).
+   * Haz clic en **"Start"** en los módulos de **Apache** y **MySQL**.
+2. **Crear la base de datos de la tienda:**
+   * Abre tu navegador y dirígete a `http://localhost/phpmyadmin`.
+   * En el menú lateral izquierdo, pulsa en "Nueva".
+   * Escribe el nombre de la base de datos: **`tienda`** (respeta las minúsculas).
+   * No necesitas crear tablas ni importar archivos `.sql` manuales, Spring Boot se encargará de ello gracias a su configuración de *Hibernate*.
+3. **Obtener el código fuente:**
+   * Abre una terminal (PowerShell o CMD) en la carpeta donde quieras guardar el proyecto.
+   * Ejecuta: 
+     ```bash
+     git clone https://github.com/enojoemotivo0/SneakersShop.git
+     cd Sneaker-shop2
+     ```
+4. **Configurar credenciales (Opcional):**
+   * Abre el proyecto en tu IDE (VS Code).
+   * Revisa el archivo `src/main/resources/application-dev.properties`.
+   * Por defecto, está configurado para conectarse al usuario `root` de MySQL sin contraseña (`spring.datasource.password=`), que es el estándar de XAMPP. Si tu base de datos tiene contraseña, escríbela ahí.
+5. **Ejecutar la aplicación:**
+   * Si usas VS Code: Abre el archivo `SnikersShopApplication.java` y pulsa "Run" encima de la función `main`.
+   * Alternativa por consola: Ejecuta el comando `mvn spring-boot:run` o usa el wrapper `./mvnw spring-boot:run`.
+6. **¡Listo!** Abre el navegador y visita: `http://localhost:8080`
 
 ---
 
-### Opción B: Ejecución en Máquina Virtual Linux (Ubuntu/Debian)
+### 🐧 Opción B: Ejecución en Linux (Máquina Virtual Ubuntu / Debian)
 
-**Requisitos previos:**
-Una máquina virtual Linux con una terminal de comandos y acceso a internet.
+Este entorno simula un despliegue más parecido a producción. Operarás por 100% por comandos.
 
-**Pasos:**
+**Pasos de ejecución:**
 
-1. **Actualiza el sistema e instala las dependencias necesarias** (Git, Java 17, MySQL Server y Maven):
+1. **Actualizar repositorios del sistema:**
    ```bash
-   sudo apt update
+   sudo apt update && sudo apt upgrade -y
+   ```
+2. **Instalar los paquetes necesarios:**
+   Instalaremos Git, el motor de Java 17, el servidor de bases de datos MySQL y la herramienta Maven de compilación.
+   ```bash
    sudo apt install git openjdk-17-jdk mysql-server maven -y
    ```
+3. **Gestión y securización de la Base de Datos MySQL:**
+   * Comprueba que MySQL está corriendo: `sudo systemctl status mysql` (Debería salir activo/verde).
+   * Abre la terminal interactiva de MySQL:
+     ```bash
+     sudo mysql -u root
+     ```
+   * Una vez dentro del prompt `mysql>`, lanza estos comandos SQL para preparar la BD y el usuario:
+     ```sql
+     -- Crear la base de datos
+     CREATE DATABASE tienda;
+     
+     -- Crear un usuario específico y otorgarle permisos totales sobre la base de datos
+     CREATE USER 'root'@'localhost' IDENTIFIED BY '';
+     GRANT ALL PRIVILEGES ON tienda.* TO 'root'@'localhost';
+     FLUSH PRIVILEGES;
 
-2. **Inicia y configura la base de datos MySQL**:
-   Asegúrate de que el servicio esté corriendo:
+     -- Salir de la terminal MySQL
+     EXIT;
+     ```
+   * *Nótese que por motivos de compatibilidad con el properties por defecto se usó la password vacía. En un caso real se usa contraseña segura.*
+4. **Clonar el proyecto:**
    ```bash
-   sudo systemctl start mysql
-   sudo systemctl enable mysql
-   ```
-   Entra a la consola de MySQL:
-   ```bash
-   sudo mysql -u root
-   ```
-   Dentro de la consola de MySQL, crea la base de datos y configurala (ajusta el usuario/contraseña si tu `application-dev.properties` los requiere, por defecto la app usa usuario `root` sin contraseña en el entorno local, lo cual puedes cambiar según tu configuración):
-   ```sql
-   CREATE DATABASE tienda;
-   -- Si necesitas ponerle contraseña al root para que coincida con tu properties:
-   ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '';
-   FLUSH PRIVILEGES;
-   EXIT;
-   ```
-
-3. **Clona el repositorio**:
-   ```bash
-   git clone <URL_DEL_REPOSITORIO>
+   git clone https://github.com/enojoemotivo0/SneakersShop.git
    cd Sneaker-shop2
    ```
-
-4. **Ejecuta la aplicación usando Maven**:
+5. **Compilar y ejecutar la aplicación:**
+   * Al ejecutar este comando, Maven descargará automáticamente las dependencias de Spring Boot, compilará el código `.java` e iniciará el servidor embebido Tomcat.
    ```bash
    mvn spring-boot:run
    ```
-
-5. La aplicación descargará las librerías necesarias, compilará el código y levantará el servidor en el puerto 8080.
-6. Accede a través del navegador de la máquina virtual (o desde tu máquina anfitriona si los puertos de la VM están ruteados) a: `http://localhost:8080` o `http://<IP_DE_LA_MAQUINA_VIRTUAL>:8080`.
+6. **Verificar el servicio:**
+   * Si estás trabajando dentro de una interfaz gráfica de Ubuntu, abre Firefox y entra a `http://localhost:8080`.
+   * Si es una Máquina Virtual en modo "Bridge" o con reenvío de puertos desde puente, utiliza la IP de la máquina: `http://<IP_MAQUINA_LINUX>:8080` desde tu ordenador anfitrión.
 
 ---
 
