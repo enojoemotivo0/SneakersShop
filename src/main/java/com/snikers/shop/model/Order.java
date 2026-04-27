@@ -69,6 +69,12 @@ public class Order {
     @Column(name = "direccion_envio", length = 255)
     private String shippingAddress;
 
+    // Método de pago elegido por el cliente al realizar el pedido.
+    @Enumerated(EnumType.STRING)
+    @Column(name = "metodo_pago", length = 20)
+    @Builder.Default
+    private PaymentMethod paymentMethod = PaymentMethod.EFECTIVO;
+
     @Column(name = "fecha_creacion", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -84,5 +90,9 @@ public class Order {
 
     public enum Status {
         PENDIENTE, PAGADO, ENVIADO, ENTREGADO, CANCELADO
+    }
+
+    public enum PaymentMethod {
+        TARJETA, EFECTIVO
     }
 }

@@ -52,6 +52,12 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
     }
 
+    // Verifica si el email ya esta registrado por cualquier usuario.
+    @Transactional(readOnly = true)
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
     public User update(User user) {
         User safeUser = Objects.requireNonNull(user, "El usuario no puede ser null");
         return userRepository.save(safeUser);

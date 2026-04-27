@@ -57,13 +57,28 @@ public class CheckoutController {
                                   @RequestParam(required = false) String fullName,
                                   @RequestParam(required = false) String phone,
                                   @RequestParam(required = false) String email,
+                                  @RequestParam(defaultValue = "EFECTIVO") String paymentMethod,
                                   Model model) {
         if (cartService.isEmpty()) return "redirect:/cart";
         
         User user = userService.findByEmail(userDetails.getUsername());
         
+        // Validar que el nuevo email no esté en uso por otro usuario antes de aplicar cambios.
+        if (email != null && !email.isBlank() && !email.equals(user.getEmail())) {
+            if (userService.existsByEmail(email)) {
+                // Email ya registrado: devolver el formulario con mensaje de error.
+                model.addAttribute("emailError", "Este email ya está en uso por otro usuario");
+                model.addAttribute("items", cartService.getItems());
+                model.addAttribute("total", cartService.getTotal());
+                model.addAttribute("user", user);
+                model.addAttribute("pageTitle", "Finalizar compra — SNIKERS");
+                return "cart/checkout";
+            }
+        }
+        
         // Actualiza datos del perfil solo si hubo cambios en el formulario.
         boolean updated = false;
+        boolean emailUpdated = false;
         if (fullName != null && !fullName.isBlank() && !fullName.equals(user.getFullName())) {
             user.setFullName(fullName);
             updated = true;
@@ -72,7 +87,6 @@ public class CheckoutController {
             user.setPhone(phone);
             updated = true;
         }
-        boolean emailUpdated = false;
         if (email != null && !email.isBlank() && !email.equals(user.getEmail())) {
             user.setEmail(email);
             updated = true;
@@ -85,20 +99,28 @@ public class CheckoutController {
         
         if (updated) {
             userService.update(user);
+            // Si cambia el email, actualizar el principal de seguridad con el nuevo username.
             if (emailUpdated) {
-            // Si cambia email, refresca el principal de seguridad con el nuevo username.
                 org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(
                         new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
-                                userService.loadUserByUsername(email), 
-                                org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getCredentials(), 
+                                userService.loadUserByUsername(email),
+                                org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getCredentials(),
                                 org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getAuthorities()
                         )
                 );
             }
         }
+
+        // Parsear método de pago; usar EFECTIVO como fallback si el valor no es válido.
+        Order.PaymentMethod pm;
+        try {
+            pm = Order.PaymentMethod.valueOf(paymentMethod.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            pm = Order.PaymentMethod.EFECTIVO;
+        }
         
         // Crea el pedido, vacia carrito y redirige a detalle con flag de confirmacion.
-        Order order = orderService.createFromCart(user, cartService.getItems(), shippingAddress);
+        Order order = orderService.createFromCart(user, cartService.getItems(), shippingAddress, pm);
         cartService.clear();
         return "redirect:/orders/" + order.getId() + "?confirmed=true";
     }

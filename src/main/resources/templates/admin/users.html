@@ -33,8 +33,8 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="u : ${users}" style="vertical-align: middle;">
-                            <td class="fw-bold" th:text="'#' + ${u.id}"></td>
+                        <tr th:each="u, iterStat : ${users}" style="vertical-align: middle;">
+                            <td class="fw-bold" th:text="'#' + ${iterStat.count}"></td>
                             <td>
                                 <img th:if="${u.profilePicture != null}" 
                                      th:src="${u.profilePicture}" 

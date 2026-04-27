@@ -47,11 +47,11 @@
                         <td>
                             <form th:action="@{/admin/orders/{id}/status(id=${order.id})}" method="post" class="d-flex gap-1">
                                 <select name="status" class="snk-form-select" style="padding: 0.3rem 0.5rem; font-size: 0.75rem;">
-                                    <option value="PENDING" th:selected="${order.status.name() == 'PENDING'}">Pendiente</option>
-                                    <option value="PAID" th:selected="${order.status.name() == 'PAID'}">Pagado</option>
-                                    <option value="SHIPPED" th:selected="${order.status.name() == 'SHIPPED'}">Enviado</option>
-                                    <option value="DELIVERED" th:selected="${order.status.name() == 'DELIVERED'}">Entregado</option>
-                                    <option value="CANCELLED" th:selected="${order.status.name() == 'CANCELLED'}">Cancelado</option>
+                                    <option value="PENDIENTE"  th:selected="${order.status.name() == 'PENDIENTE'}">Pendiente</option>
+                                    <option value="PAGADO"     th:selected="${order.status.name() == 'PAGADO'}">Pagado</option>
+                                    <option value="ENVIADO"    th:selected="${order.status.name() == 'ENVIADO'}">Enviado</option>
+                                    <option value="ENTREGADO"  th:selected="${order.status.name() == 'ENTREGADO'}">Entregado</option>
+                                    <option value="CANCELADO"  th:selected="${order.status.name() == 'CANCELADO'}">Cancelado</option>
                                 </select>
                                 <button type="submit" class="snk-btn"
                                         style="padding: 0.3rem 0.7rem; font-size: 0.7rem; background: var(--snk-volt); color: var(--snk-black);">

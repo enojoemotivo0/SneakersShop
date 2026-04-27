@@ -24,7 +24,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductService productService;
 
-    public Order createFromCart(User user, List<CartItem> cartItems, String shippingAddress) {
+    public Order createFromCart(User user, List<CartItem> cartItems, String shippingAddress, Order.PaymentMethod paymentMethod) {
         if (cartItems.isEmpty()) {
             throw new IllegalStateException("El carrito está vacío");
         }
@@ -33,6 +33,7 @@ public class OrderService {
                 .user(user)
                 .shippingAddress(shippingAddress)
                 .status(Order.Status.PENDIENTE)
+                .paymentMethod(paymentMethod)
                 .total(BigDecimal.ZERO)
                 .build();
 

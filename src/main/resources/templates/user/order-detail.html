@@ -77,6 +77,11 @@
                         <strong style="color: var(--snk-black);">Dirección de envío:</strong><br>
                         <span th:text="${order.shippingAddress}">Dirección</span>
                     </div>
+                    <div class="snk-mt-2">
+                        <strong style="color: var(--snk-black);">Método de pago:</strong>
+                        <span th:if="${order.paymentMethod != null and order.paymentMethod.name() == 'TARJETA'}">💳 Tarjeta</span>
+                        <span th:if="${order.paymentMethod == null or order.paymentMethod.name() == 'EFECTIVO'}">💵 Efectivo (contra reembolso)</span>
+                    </div>
                 </div>
             </div>
 

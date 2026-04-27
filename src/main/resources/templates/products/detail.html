@@ -90,16 +90,13 @@
                 <form th:action="@{/cart/add}" method="post" class="mt-4">
                     <input type="hidden" name="productId" th:value="${product.id}">
 
-                    <!-- Selector de tallas (arreglado: sin parseInt inline) -->
-                    <div class="mb-4" th:if="${product.sizeRange != null and !product.sizeRange.isEmpty() and product.sizeRange.contains('-')}">
+                    <!-- Selector de tallas: siempre muestra 36-46 para que el cliente elija -->
+                    <div class="mb-4">
                         <small class="text-uppercase text-muted fw-bold d-block mb-2">Elige tu talla</small>
-
-                        <div class="row row-cols-4 row-cols-md-6 g-2" th:with="
-                            parts=${#strings.arraySplit(product.sizeRange, '-')},
-                            min=${T(java.lang.Integer).parseInt(parts[0].trim())},
-                            max=${T(java.lang.Integer).parseInt(parts[1].trim())}">
-                            <div class="col" th:each="s : ${#numbers.sequence(min, max)}">
-                                <input type="radio" class="btn-check" name="size" th:value="${s}" th:id="'size-' + ${s}" required>
+                        <div class="row row-cols-4 row-cols-md-6 g-2">
+                            <div class="col" th:each="s : ${#numbers.sequence(36, 46)}">
+                                <input type="radio" class="btn-check" name="size"
+                                       th:value="${s}" th:id="'size-' + ${s}" required>
                                 <label class="btn btn-outline-dark w-100" th:for="'size-' + ${s}" th:text="${s}">40</label>
                             </div>
                         </div>

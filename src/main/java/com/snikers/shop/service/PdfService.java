@@ -68,7 +68,9 @@ public class PdfService {
             rightCell.addElement(new Paragraph("DETALLES DEL PEDIDO:", boldFont));
             rightCell.addElement(new Paragraph("Nº de Pedido: " + order.getOrderNumber(), normalFont));
             rightCell.addElement(new Paragraph("Fecha: " + order.getCreatedAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")), normalFont));
-            rightCell.addElement(new Paragraph("Método de Pago: Tarjeta Bancaria", normalFont)); // Ejemplo
+            String pagoLabel = (order.getPaymentMethod() != null && order.getPaymentMethod() == Order.PaymentMethod.TARJETA)
+                    ? "Tarjeta Bancaria" : "Efectivo (contra reembolso)";
+            rightCell.addElement(new Paragraph("Método de Pago: " + pagoLabel, normalFont));
             infoTable.addCell(rightCell);
 
             document.add(infoTable);

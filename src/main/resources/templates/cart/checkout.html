@@ -30,7 +30,10 @@
                                 <div class="col-md-12">
                                     <label class="snk-form-label">Email</label>
                                     <input type="email" name="email" class="snk-form-control"
-                                           th:value="${user.email}" required>
+                                           th:value="${user.email}" required
+                                           th:classappend="${emailError} ? 'is-invalid' : ''">
+                                    <!-- Mensaje de error si el email ya está en uso -->
+                                    <div th:if="${emailError}" style="color: #e74c3c; font-size: 0.8rem; margin-top: 0.3rem;" th:text="${emailError}"></div>
                                 </div>
                                 <div class="col-md-12">
                                     <label class="snk-form-label">Teléfono</label>
@@ -50,11 +53,38 @@
 
                         <div class="snk-card snk-mt-3">
                             <h3 style="font-size: 1.3rem; margin-bottom: 1rem;">Método de pago</h3>
-                            <div style="background: var(--snk-cream); padding: 1rem; border-radius: 6px; font-family: var(--font-mono); font-size: 0.85rem;">
-                                💳 Contra reembolso (demo académica)
-                                <br>
-                                <small style="color: var(--snk-smoke);">Este proyecto no integra pasarela de pago real.</small>
+                            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+
+                                <!-- Opción: Tarjeta -->
+                                <label style="display: flex; align-items: center; gap: 1rem; padding: 1rem 1.25rem; border: 2px solid var(--snk-graphite); border-radius: 8px; cursor: pointer; transition: border-color .2s;"
+                                       id="label-tarjeta">
+                                    <input type="radio" name="paymentMethod" value="TARJETA" id="pay-tarjeta"
+                                           style="accent-color: var(--snk-black); width: 18px; height: 18px;"
+                                           onchange="highlightPayment()">
+                                    <span style="font-size: 1.5rem;">💳</span>
+                                    <div>
+                                        <strong style="font-family: var(--font-display); text-transform: uppercase; font-size: 0.95rem;">Tarjeta</strong>
+                                        <small style="display: block; color: var(--snk-smoke); font-family: var(--font-mono); font-size: 0.75rem;">Visa, Mastercard, débito</small>
+                                    </div>
+                                </label>
+
+                                <!-- Opción: Efectivo (contra reembolso) -->
+                                <label style="display: flex; align-items: center; gap: 1rem; padding: 1rem 1.25rem; border: 2px solid var(--snk-graphite); border-radius: 8px; cursor: pointer; transition: border-color .2s;"
+                                       id="label-efectivo">
+                                    <input type="radio" name="paymentMethod" value="EFECTIVO" id="pay-efectivo"
+                                           style="accent-color: var(--snk-black); width: 18px; height: 18px;"
+                                           checked onchange="highlightPayment()">
+                                    <span style="font-size: 1.5rem;">💵</span>
+                                    <div>
+                                        <strong style="font-family: var(--font-display); text-transform: uppercase; font-size: 0.95rem;">Efectivo</strong>
+                                        <small style="display: block; color: var(--snk-smoke); font-family: var(--font-mono); font-size: 0.75rem;">Contra reembolso al recibir</small>
+                                    </div>
+                                </label>
+
                             </div>
+                            <small class="text-mono snk-mt-2 d-block" style="color: var(--snk-smoke); font-size: 0.72rem;">
+                                Demo académica — no se realizan cargos reales.
+                            </small>
                         </div>
                     </div>
 
@@ -116,5 +146,21 @@
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+<script>
+    // Resalta el método de pago seleccionado con borde negro
+    function highlightPayment() {
+        const labels = { 'pay-tarjeta': 'label-tarjeta', 'pay-efectivo': 'label-efectivo' };
+        Object.entries(labels).forEach(([inputId, labelId]) => {
+            const input = document.getElementById(inputId);
+            const label = document.getElementById(labelId);
+            if (input && label) {
+                label.style.borderColor = input.checked ? 'var(--snk-black)' : 'var(--snk-graphite)';
+                label.style.background   = input.checked ? 'var(--snk-cream)' : '';
+            }
+        });
+    }
+    // Aplicar resaltado al cargar la página (efectivo marcado por defecto)
+    document.addEventListener('DOMContentLoaded', highlightPayment);
+</script>
 </body>
 </html>
