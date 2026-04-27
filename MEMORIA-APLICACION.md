@@ -61,7 +61,454 @@
 
 ---
 
-## 📦 MODELOS/ENTIDADES (5 clases)
+## � DIAGRAMA DE CASOS DE USO
+
+```mermaid
+graph TB
+    subgraph Cliente["👤 CLIENTE"]
+        UC1["Registrarse"]
+        UC2["Iniciar Sesión"]
+        UC3["Navegar Catálogo"]
+        UC4["Buscar Productos"]
+        UC5["Ver Detalle Producto"]
+        UC6["Añadir al Carrito"]
+        UC7["Modificar Carrito"]
+        UC8["Hacer Checkout"]
+        UC9["Descargar Factura"]
+        UC10["Ver Historial Pedidos"]
+    end
+    
+    subgraph Admin["🔐 ADMINISTRADOR"]
+        UC11["Gestionar Productos"]
+        UC12["Gestionar Categorías"]
+        UC13["Gestionar Pedidos"]
+        UC14["Gestionar Usuarios"]
+        UC15["Ver Dashboard"]
+    end
+    
+    subgraph Sistema["🔧 SISTEMA"]
+        UC16["Encriptar Contraseña"]
+        UC17["Generar PDF"]
+        UC18["Validar Stock"]
+        UC19["Crear Pedido"]
+    end
+    
+    style Cliente fill:#e1f5e1
+    style Admin fill:#ffe1e1
+    style Sistema fill:#e1e5ff
+```
+
+---
+
+## 🗂️ DIAGRAMA DE CLASES (Completo)
+
+```mermaid
+classDiagram
+    class SnikersShopApplication {
+        +main(String[] args) void
+    }
+    
+    class User {
+        -Long id
+        -String email
+        -String password
+        -String fullName
+        -String phone
+        -String address
+        -String profilePicture
+        -Role role
+        -LocalDateTime createdAt
+        -LocalDateTime updatedAt
+        +register() void
+        +authenticate() boolean
+    }
+    
+    class Product {
+        -Long id
+        -String name
+        -String brand
+        -String description
+        -BigDecimal price
+        -BigDecimal originalPrice
+        -Integer stock
+        -String imageUrl
+        -String color
+        -String sizeRange
+        -Boolean featured
+        -Boolean active
+        -Category category
+        +getDiscountPercentage() int
+        +decrementStock(int qty) void
+    }
+    
+    class Category {
+        -Long id
+        -String name
+        -String description
+        -List~Product~ products
+        +findAll() List
+    }
+    
+    class Order {
+        -Long id
+        -String orderNumber
+        -Status status
+        -String shippingAddress
+        -BigDecimal totalAmount
+        -User user
+        -List~OrderItem~ items
+        -LocalDateTime createdAt
+        +createFromCart() Order
+        +updateStatus(Status s) void
+    }
+    
+    class OrderItem {
+        -Long id
+        -Integer quantity
+        -String size
+        -BigDecimal priceAtPurchase
+        -BigDecimal subtotal
+        -Order order
+        -Product product
+        +calculateSubtotal() BigDecimal
+    }
+    
+    class ProductService {
+        -ProductRepository repo
+        +findAllActive() List
+        +findById(Long id) Product
+        +search(String q) Page
+        +save(Product p) Product
+        +update(Long id, Product p) Product
+        +softDelete(Long id) void
+        +decrementStock(Long id, int qty) void
+    }
+    
+    class CategoryService {
+        -CategoryRepository repo
+        +findAll() List
+        +findById(Long id) Category
+        +save(Category c) Category
+        +delete(Long id) void
+    }
+    
+    class UserService {
+        -UserRepository repo
+        -PasswordEncoder encoder
+        +register(User u) User
+        +findByEmail(String e) User
+        +loadUserByUsername(String e) UserDetails
+        +update(User u) User
+    }
+    
+    class CartService {
+        -List~CartItem~ items
+        +add(Product p, int qty, String size) void
+        +getItems() List
+        +getTotal() BigDecimal
+        +remove(Long id, String size) void
+        +clear() void
+    }
+    
+    class OrderService {
+        -OrderRepository repo
+        -ProductService productService
+        +createFromCart(User u, List items) Order
+        +findById(Long id) Order
+        +findByUser(Long userId) List
+        +updateStatus(Long id, Status s) void
+    }
+    
+    class PdfService {
+        +generateInvoice(Order o) byte[]
+    }
+    
+    class HomeController {
+        +home(Model m) String
+    }
+    
+    class ProductController {
+        +list(Model m) String
+        +detail(Long id, Model m) String
+        +search(String q, Model m) String
+    }
+    
+    class AuthController {
+        +loginForm() String
+        +register(User u) String
+    }
+    
+    class CartController {
+        +view() String
+        +add(Long id) String
+        +remove(Long id) String
+        +clear() String
+    }
+    
+    class CheckoutController {
+        +checkoutForm() String
+        +processCheckout(User u) String
+    }
+    
+    class OrderController {
+        +myOrders(User u) String
+        +detail(Long id) String
+        +downloadInvoice(Long id) byte[]
+    }
+    
+    class AdminController {
+        +dashboard() String
+        +manageProducts() String
+        +manageOrders() String
+    }
+    
+    class SecurityConfig {
+        +passwordEncoder() PasswordEncoder
+        +filterChain(HttpSecurity h) SecurityFilterChain
+    }
+    
+    %% Relaciones
+    User "1" -- "*" Order : realiza
+    Product "*" -- "1" Category : pertenece
+    Order "1" -- "*" OrderItem : contiene
+    OrderItem "*" -- "1" Product : detalla
+    
+    ProductService --> ProductRepository
+    CategoryService --> CategoryRepository
+    UserService --> UserRepository
+    OrderService --> OrderRepository
+    
+    HomeController --> ProductService
+    ProductController --> ProductService
+    CartController --> CartService
+    CheckoutController --> CartService
+    CheckoutController --> OrderService
+    OrderController --> OrderService
+    AdminController --> ProductService
+    AdminController --> OrderService
+    AdminController --> UserService
+```
+
+---
+
+## 💾 DIAGRAMA ENTIDAD-RELACIÓN
+
+```mermaid
+erDiagram
+    USUARIOS ||--o{ PEDIDOS : realiza
+    USUARIOS ||--o{ PERFILES : tiene
+    CATEGORIAS ||--o{ PRODUCTOS : contiene
+    PRODUCTOS ||--o{ DETALLES_PEDIDO : "aparece en"
+    PEDIDOS ||--o{ DETALLES_PEDIDO : "tiene"
+    
+    USUARIOS {
+        BIGINT id PK
+        VARCHAR email UK
+        VARCHAR password
+        VARCHAR nombre_completo
+        VARCHAR telefono
+        VARCHAR direccion
+        MEDIUMTEXT foto_perfil
+        ENUM rol
+        DATETIME fecha_creacion
+        DATETIME fecha_actualizacion
+    }
+    
+    CATEGORIAS {
+        BIGINT id PK
+        VARCHAR nombre UK
+        VARCHAR descripcion
+        DATETIME fecha_creacion
+    }
+    
+    PRODUCTOS {
+        BIGINT id PK
+        VARCHAR nombre
+        VARCHAR marca
+        VARCHAR descripcion
+        DECIMAL precio
+        DECIMAL precio_original
+        INTEGER cantidad_stock
+        MEDIUMTEXT url_imagen
+        VARCHAR color
+        VARCHAR rango_tallas
+        BOOLEAN destacado
+        BOOLEAN activo
+        BIGINT categoria_id FK
+        DATETIME fecha_creacion
+        DATETIME fecha_actualizacion
+    }
+    
+    PEDIDOS {
+        BIGINT id PK
+        VARCHAR numero_pedido UK
+        ENUM estado
+        VARCHAR direccion_envio
+        DECIMAL cantidad_total
+        BIGINT usuario_id FK
+        DATETIME fecha_creacion
+    }
+    
+    DETALLES_PEDIDO {
+        BIGINT id PK
+        INTEGER cantidad
+        VARCHAR talla
+        DECIMAL precio_en_compra
+        DECIMAL subtotal
+        BIGINT pedido_id FK
+        BIGINT producto_id FK
+    }
+    
+    PERFILES {
+        BIGINT id PK
+        BIGINT usuario_id FK
+        VARCHAR telefono
+        VARCHAR direccion
+        MEDIUMTEXT foto
+    }
+```
+
+---
+
+## 🔄 DIAGRAMA DE SECUENCIA (FLUJO DE COMPRA)
+
+```mermaid
+sequenceDiagram
+    participant Cliente as 👤 Cliente
+    participant UI as 🌐 Navegador
+    participant Controller as 🎛️ Controller
+    participant Service as 🔧 Service
+    participant Repository as 💾 Repository
+    participant BD as 🗄️ MySQL
+    
+    Note over Cliente,BD: FASE 1: AGREGAR AL CARRITO
+    Cliente->>UI: Click "Añadir al carrito"
+    UI->>Controller: POST /cart/add<br/>productId=7&qty=1&size=42
+    Controller->>Service: cartService.add(product, 1, "42")
+    Service->>Service: items.add(CartItem)
+    Service-->>Controller: ✓ Añadido
+    Controller-->>UI: Redirect /cart
+    UI-->>Cliente: Mostrar carrito (contador +1)
+    
+    Note over Cliente,BD: FASE 2: CHECKOUT
+    Cliente->>UI: Click "Finalizar compra"
+    UI->>Controller: GET /checkout
+    Controller->>Service: userService.findByEmail()
+    Service->>Repository: findByEmail(email)
+    Repository->>BD: SELECT * FROM usuarios<br/>WHERE email=?
+    BD-->>Repository: User data
+    Repository-->>Service: User object
+    Service-->>Controller: User
+    Controller->>UI: Renderiza checkout.html<br/>con datos pre-rellenados
+    UI-->>Cliente: Formulario completado
+    
+    Note over Cliente,BD: FASE 3: PROCESAR PEDIDO
+    Cliente->>UI: Click "Confirmar compra"
+    UI->>Controller: POST /checkout<br/>shippingAddress=...
+    Controller->>Service: orderService.createFromCart()
+    
+    Service->>Repository: orderRepository.save(Order)
+    Repository->>BD: INSERT INTO pedidos
+    BD-->>Repository: ID generado
+    
+    loop Para cada item del carrito
+        Service->>Repository: orderItemRepository.save(OrderItem)
+        Repository->>BD: INSERT INTO detalles_pedido
+        BD-->>Repository: ✓
+        
+        Service->>Service: productService.decrementStock()
+        Service->>Repository: productRepository.save(Product)
+        Repository->>BD: UPDATE productos<br/>SET cantidad_stock=cantidad_stock-1
+        BD-->>Repository: ✓
+    end
+    
+    Service->>Service: cartService.clear()
+    Service-->>Controller: Order creada
+    
+    Note over Cliente,BD: FASE 4: CONFIRMACIÓN
+    Controller->>UI: Redirect /orders/123<br/>?confirmed=true
+    UI->>Controller: GET /orders/123
+    Controller->>Service: orderService.findById(123)
+    Service->>Repository: findById(123)
+    Repository->>BD: SELECT * FROM pedidos<br/>WHERE id=123
+    BD-->>Repository: Order + Items
+    Repository-->>Service: Order object
+    Service-->>Controller: Order
+    Controller->>UI: Renderiza order-detail.html<br/>con "Pedido confirmado"
+    UI-->>Cliente: ✅ Compra completada
+    
+    Note over Cliente,BD: FASE 5: DESCARGA FACTURA
+    Cliente->>UI: Click "Descargar factura"
+    UI->>Controller: GET /orders/123/invoice
+    Controller->>Service: pdfService.generateInvoice(order)
+    Service->>Service: Genera PDF con datos
+    Service-->>Controller: byte[] PDF
+    Controller-->>UI: Content-Type: application/pdf
+    UI-->>Cliente: ⬇️ Factura descargada
+```
+
+---
+
+## 👤 DIAGRAMA DE CASOS DE USO (DETALLADO)
+
+```mermaid
+graph TB
+    subgraph Usuario["👤 USUARIO NO AUTENTICADO"]
+        UC1["Ver Portada"]
+        UC2["Navegar Catálogo"]
+        UC3["Buscar Productos"]
+        UC4["Registrarse"]
+        UC5["Iniciar Sesión"]
+    end
+    
+    subgraph ClienteAuth["✅ CLIENTE AUTENTICADO"]
+        UC6["Ver Carrito"]
+        UC7["Añadir al Carrito"]
+        UC8["Modificar Carrito"]
+        UC9["Hacer Checkout"]
+        UC10["Actualizar Perfil"]
+        UC11["Ver Historial Pedidos"]
+        UC12["Descargar Factura"]
+    end
+    
+    subgraph Admin["🔐 ADMINISTRADOR"]
+        UC13["Dashboard Admin"]
+        UC14["CRUD Productos"]
+        UC15["CRUD Categorías"]
+        UC16["Gestionar Pedidos"]
+        UC17["Cambiar Estado Pedidos"]
+        UC18["Gestionar Usuarios"]
+    end
+    
+    UC1 --> UC2
+    UC2 --> UC3
+    UC3 -.->|no autenticado| UC4
+    UC3 -.->|no autenticado| UC5
+    UC4 --> UC6
+    UC5 --> UC6
+    UC6 --> UC7
+    UC7 --> UC8
+    UC8 --> UC9
+    UC9 --> UC10
+    UC9 --> UC12
+    UC10 --> UC11
+    UC11 --> UC12
+    
+    UC5 -.->|admin| UC13
+    UC13 --> UC14
+    UC13 --> UC15
+    UC13 --> UC16
+    UC16 --> UC17
+    UC13 --> UC18
+    
+    style Usuario fill:#e1f5e1,stroke:#4caf50,stroke-width:2px
+    style ClienteAuth fill:#e3f2fd,stroke:#2196f3,stroke-width:2px
+    style Admin fill:#ffe0b2,stroke:#ff9800,stroke-width:2px
+```
+
+---
+
+## �📦 MODELOS/ENTIDADES (5 clases)
 
 ### 1. **USUARIO (User.java)**
 ```java
