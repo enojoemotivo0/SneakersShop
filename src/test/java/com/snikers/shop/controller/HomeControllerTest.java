@@ -36,10 +36,12 @@ class HomeControllerTest {
     private CategoryService categoryService;
 
     @MockBean
+    @SuppressWarnings("unused") // Requerido por el contexto Spring, no se usa directamente
     private CartService cartService;
 
     // Necesario para que SecurityConfig pueda construir DaoAuthenticationProvider
     @MockBean
+    @SuppressWarnings("unused")
     private UserService userService;
 
     @Test

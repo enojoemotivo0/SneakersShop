@@ -18,6 +18,7 @@ class CartServiceTest {
     private Product product;
 
     @BeforeEach
+    @SuppressWarnings("unused") // JUnit lo invoca automáticamente antes de cada test
     void setUp() {
         cartService = new CartService();
         // Producto de prueba con 5 unidades en stock

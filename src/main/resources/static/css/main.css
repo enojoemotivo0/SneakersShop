@@ -173,6 +173,7 @@ h3 { font-size: clamp(1.5rem, 3vw, 2.5rem); }
     background: var(--snk-charcoal);
     border: 1px solid var(--snk-graphite);
     color: var(--snk-white);
+    caret-color: var(--snk-volt);
     padding: 0.5rem 1rem;
     border-radius: 2px;
     font-size: 0.85rem;
@@ -962,6 +963,8 @@ h3 { font-size: clamp(1.5rem, 3vw, 2.5rem); }
     font-family: var(--font-body);
     font-size: 0.95rem;
     background: var(--snk-white);
+    color: var(--snk-ink);
+    caret-color: var(--snk-ink);
     transition: border-color 0.25s var(--easing);
 }
 

@@ -26,8 +26,12 @@
                 </li>
             </ul>
 
-            <form class="d-flex align-items-center gap-2 flex-wrap" th:action="@{/search}" method="get" role="search">
-                <input class="snk-search" type="search" name="q" placeholder="Buscar sneakers…" aria-label="Buscar">
+            <!-- Buscador y acciones de usuario en un contenedor flex (forms separados, no anidados) -->
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+
+                <form th:action="@{/search}" method="get" role="search" class="d-flex align-items-center">
+                    <input class="snk-search" type="search" name="q" placeholder="Buscar sneakers…" aria-label="Buscar">
+                </form>
 
                 <a th:href="@{/cart}" class="snk-cart-btn" aria-label="Carrito">
                     CARRITO
@@ -43,11 +47,10 @@
                 </div>
 
                 <div sec:authorize="isAuthenticated()" class="dropdown" th:with="currentUser=${@userService.findByEmail(#authentication.name)}">
-                    <!-- MI CUENTA AHORA CON FOTO! -->
                     <button class="snk-cart-btn dropdown-toggle d-flex align-items-center gap-2" data-bs-toggle="dropdown" aria-expanded="false" style="padding-left: 0.5rem;">
-                        <img th:if="${currentUser.profilePicture != null}" 
-                             th:src="${currentUser.profilePicture}" 
-                             alt="Mi Perfil" 
+                        <img th:if="${currentUser.profilePicture != null}"
+                             th:src="${currentUser.profilePicture}"
+                             alt="Mi Perfil"
                              style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; border: 1px solid #444;">
                         <svg th:unless="${currentUser.profilePicture != null}" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
                           <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
@@ -65,13 +68,15 @@
                         <li><a class="dropdown-item" th:href="@{/orders}">Mis pedidos</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
+                            <!-- Form independiente: nunca anidado dentro de otro form -->
                             <form th:action="@{/logout}" method="post" style="margin: 0; padding: 0;">
                                 <button type="submit" class="dropdown-item text-danger">Cerrar sesión</button>
                             </form>
                         </li>
                     </ul>
                 </div>
-            </form>
+
+            </div>
         </div>
     </nav>
 </header>

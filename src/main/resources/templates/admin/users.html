@@ -93,7 +93,14 @@
 
                             <div class="mb-4">
                                 <label class="form-label small fw-bold">Foto de Perfil</label>
-                                <input type="file" class="form-control" name="photoFile" accept="image/*">
+                                <!-- Preview del avatar antes de guardar -->
+                                <div id="admin-avatar-wrap" style="width:72px;height:72px;border-radius:50%;overflow:hidden;background:#222;display:flex;align-items:center;justify-content:center;margin-bottom:0.5rem;cursor:pointer;border:2px dashed #555;" onclick="document.getElementById('admin-photo-input').click()">
+                                    <svg id="admin-avatar-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#aaa" viewBox="0 0 16 16">
+                                      <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                                    </svg>
+                                    <img id="admin-avatar-img" src="" alt="Preview" style="display:none;width:100%;height:100%;object-fit:cover;">
+                                </div>
+                                <input type="file" id="admin-photo-input" class="form-control" name="photoFile" accept="image/*">
                                 <small class="text-muted d-block mt-1">Opcional. Se mostrará en el avatar de la barra superior.</small>
                             </div>
 
@@ -122,5 +129,20 @@
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+<script>
+    // Previsualización inmediata de foto de perfil en el panel admin
+    document.getElementById('admin-photo-input').addEventListener('change', function () {
+        const file = this.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            document.getElementById('admin-avatar-icon').style.display = 'none';
+            const img = document.getElementById('admin-avatar-img');
+            img.src = e.target.result;
+            img.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    });
+</script>
 </body>
 </html>
