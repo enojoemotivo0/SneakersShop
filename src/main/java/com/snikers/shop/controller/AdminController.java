@@ -28,10 +28,13 @@ import com.snikers.shop.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Controlador de administración.
+ * Gestiona backoffice: productos, categorías, pedidos y usuarios.
+ */
 @Controller
 @RequestMapping("/admin")
 @RequiredArgsConstructor
-// Backoffice de administracion: productos, categorias, pedidos y usuarios.
 public class AdminController {
 
     private final ProductService productService;
