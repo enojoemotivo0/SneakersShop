@@ -3,6 +3,7 @@ package com.snikers.shop.config; // La carpeta virtual de configuraciones.
 // Herramientas que nos permiten manejar números (precios) y listas de cosas.
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,6 +26,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Component // Le decimos a la tienda: "Oye, este archivo es un empleado tuyo. Tenlo en cuenta."
 @RequiredArgsConstructor // Le damos magia a nuestro empleado para conectar las piezas.
+@SuppressWarnings("null")
 public class DataInitializer implements CommandLineRunner { // "CommandLineRunner" significa que corre automáticamente al arrancar.
 
     // Nuestro reponedor necesita acceso a los armarios donde se guardan categorías y productos.
@@ -36,37 +38,55 @@ public class DataInitializer implements CommandLineRunner { // "CommandLineRunne
     // Aquí están las instrucciones exactas de qué debe hacer el reponedor cuando entra a trabajar.
     @Override
     public void run(String... args) {
-        // Primero, mira los estantes. Si ya hay categorías (es decir, ya hay datos),
-        // dice "ah, ya hay cosas", se da la vuelta y se va sin hacer nada.
+        // Garantiza SIEMPRE que los usuarios de prueba existan, independientemente
+        // de si el catálogo ya fue cargado en ejecuciones anteriores.
+        if (!userRepository.existsByEmail("cliente@snikers.shop")) {
+            Objects.requireNonNull(userRepository.save(User.builder()
+                    .fullName("Cliente de Prueba")
+                    .email("cliente@snikers.shop")
+                    .password(passwordEncoder.encode("cliente123"))
+                    .role(User.Role.CLIENTE)
+                    .build()));
+        }
+        if (!userRepository.existsByEmail("admin@snikers.shop")) {
+            Objects.requireNonNull(userRepository.save(User.builder()
+                    .fullName("Admin de Prueba")
+                    .email("admin@snikers.shop")
+                    .password(passwordEncoder.encode("admin1234"))
+                    .role(User.Role.ADMINISTRADOR)
+                    .build()));
+        }
+
+        // Si ya hay categorías, el catálogo está cargado. No reinsertar productos.
         if (categoryRepository.count() > 0) return;
 
         // ===== Se inventan las Categorías (los carteles de los pasillos) y se guardan =====
-        Category running = categoryRepository.save(Category.builder()
+        Category running = Objects.requireNonNull(categoryRepository.save(Category.builder()
                 .name("Running")
                 .slug("running")
                 .description("Sneakers ligeras con amortiguación máxima para correr largas distancias.")
-                .build());
+                .build()));
 
-        Category basketball = categoryRepository.save(Category.builder()
+        Category basketball = Objects.requireNonNull(categoryRepository.save(Category.builder()
                 .name("Basketball")
                 .slug("basketball")
                 .description("Zapatillas de baloncesto con sujeción total y tracción agresiva.")
-                .build());
+                .build()));
 
-        Category lifestyle = categoryRepository.save(Category.builder()
+        Category lifestyle = Objects.requireNonNull(categoryRepository.save(Category.builder()
                 .name("Lifestyle")
                 .slug("lifestyle")
                 .description("Sneakers icónicas pensadas para el día a día, con estilo urbano.")
-                .build());
+                .build()));
 
-        Category skate = categoryRepository.save(Category.builder()
+        Category skate = Objects.requireNonNull(categoryRepository.save(Category.builder()
                 .name("Skate")
                 .slug("skate")
                 .description("Modelos resistentes diseñados para skaters: suela vulcanizada y durabilidad.")
-                .build());
+                .build()));
 
         // ===== Se inventa un montón de zapatillas de ejemplo, poniéndolas en sus categorías y asignando fotos ====
-        productRepository.saveAll(List.of(
+        productRepository.saveAll(Objects.requireNonNull(List.of(
                 Product.builder()
                         .name("Air Prime Nova 91")
                         .brand("Aeroline") // Marca
@@ -157,27 +177,7 @@ public class DataInitializer implements CommandLineRunner { // "CommandLineRunne
                         .sizeRange("37-45")
                         .imageUrl("https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=1200&q=80")
                         .featured(false).active(true).category(skate).build()
-        ));
-
-        // ===== Se inventan los usuarios de prueba =====
-        // Como la página los anuncia en la pantalla de Log-in, tenemos que asegurarnos de que el reponedor automático los cree siempre.
-        if (!userRepository.existsByEmail("cliente@snikers.shop")) {
-            userRepository.save(User.builder()
-                    .fullName("Cliente de Prueba")
-                    .email("cliente@snikers.shop")
-                    .password(passwordEncoder.encode("cliente123"))
-                    .role(User.Role.CLIENTE)
-                    .build());
-        }
-
-        if (!userRepository.existsByEmail("admin@snikers.shop")) {
-            userRepository.save(User.builder()
-                    .fullName("Admin de Prueba")
-                    .email("admin@snikers.shop")
-                    .password(passwordEncoder.encode("admin1234"))
-                    .role(User.Role.ADMINISTRADOR)
-                    .build());
-        }
+        )));
 
         // Cuando termina, imprime este mensaje de satisfacción en la pantallita negra de herramientas (consola).
         System.out.println("✅ Datos iniciales cargados (categorías, productos y usuarios de prueba).");

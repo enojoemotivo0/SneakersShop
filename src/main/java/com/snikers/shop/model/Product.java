@@ -37,8 +37,8 @@ import lombok.ToString;
  */
 @Entity // Otra vez: "¡Créame una hoja o tabla en nuestra tienda digital para esto!"
 @Table(name = "productos", indexes = { // "Llama a la carpeta 'productos' y ordena alfabéticamente por 'nombre' y 'marca' para buscar rápido."
-        @Index(name = "idx_product_name", columnList = "name"),
-        @Index(name = "idx_product_brand", columnList = "brand")
+    @Index(name = "idx_product_name", columnList = "nombre"),
+    @Index(name = "idx_product_brand", columnList = "marca")
 })
 @Getter @Setter // Magia para autogenerar el poder de cambiar o leer la talla, nombre, etc. sin escribir tanto.
 @NoArgsConstructor // Molde en blanco

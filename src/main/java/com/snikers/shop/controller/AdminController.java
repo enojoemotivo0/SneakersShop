@@ -2,6 +2,7 @@ package com.snikers.shop.controller;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Objects;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,6 +36,7 @@ import lombok.RequiredArgsConstructor;
 @Controller
 @RequestMapping("/admin")
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 public class AdminController {
 
     private final ProductService productService;
@@ -204,7 +206,8 @@ public class AdminController {
             }
             userService.register(user);
         } catch(IllegalArgumentException e) {
-            bindingResult.rejectValue("email", "error.user", e.getMessage());
+            String errorMessage = Objects.requireNonNullElse(e.getMessage(), "Ya existe un usuario con ese email");
+            bindingResult.rejectValue("email", "error.user", errorMessage);
             model.addAttribute("users", userRepository.findAll());
             return "admin/users";
         } catch(IOException e) {

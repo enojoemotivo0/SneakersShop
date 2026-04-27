@@ -62,10 +62,6 @@ data/
 *.mv.db
 *.trace.db
 
-# --- Docker ---
-.docker/
-docker-volume/
-
 # --- Variables de entorno sensibles ---
 .env
 .env.local

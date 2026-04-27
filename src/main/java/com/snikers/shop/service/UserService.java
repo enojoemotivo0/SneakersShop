@@ -1,8 +1,8 @@
 package com.snikers.shop.service;
 
-import com.snikers.shop.model.User;
-import com.snikers.shop.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.Objects;
+
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,7 +11,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import com.snikers.shop.model.User;
+import com.snikers.shop.repository.UserRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -50,6 +53,7 @@ public class UserService implements UserDetailsService {
     }
 
     public User update(User user) {
-        return userRepository.save(user);
+        User safeUser = Objects.requireNonNull(user, "El usuario no puede ser null");
+        return userRepository.save(safeUser);
     }
 }

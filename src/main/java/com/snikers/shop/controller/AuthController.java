@@ -2,6 +2,7 @@ package com.snikers.shop.controller;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Objects;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 // Gestiona autenticación y registro de usuarios.
 public class AuthController {
 
@@ -77,7 +79,8 @@ public class AuthController {
             userService.register(user);
         } catch (IllegalArgumentException ex) {
             // Error de negocio típico: email ya existente.
-            bindingResult.rejectValue("email", "email.duplicate", ex.getMessage());
+            String errorMessage = Objects.requireNonNullElse(ex.getMessage(), "Ya existe un usuario con ese email");
+            bindingResult.rejectValue("email", "email.duplicate", errorMessage);
             model.addAttribute("pageTitle", "Crear cuenta — SNIKERS");
             return "auth/register";
         } catch (IOException ex) {

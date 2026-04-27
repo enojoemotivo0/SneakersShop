@@ -79,7 +79,7 @@ public class SecurityConfig {
                         .loginProcessingUrl("/login") // Donde se envían los datos cuando pulsas "Entrar"
                         .usernameParameter("email") // Lo que pedimos para iniciar sesión es el email
                         .passwordParameter("password") // Y la contraseña
-                        .defaultSuccessUrl("/", true) // Si todo va bien, volvemos a la página principal ("/")
+                        .defaultSuccessUrl("/", false) // Si todo va bien, redirige a la página solicitada (o "/" por defecto)
                         .failureUrl("/login?error=true") // Si fallan datos, enseñamos un error
                         .permitAll() // Permitimos que la ventana sea de acceso público
                 )

@@ -2,6 +2,7 @@ package com.snikers.shop.service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,7 +66,8 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public Order findById(Long id) {
-        return orderRepository.findById(id)
+        Long safeId = Objects.requireNonNull(id, "El id del pedido no puede ser null");
+        return orderRepository.findById(safeId)
                 .orElseThrow(() -> new IllegalArgumentException("Pedido no encontrado"));
     }
 

@@ -2,6 +2,7 @@ package com.snikers.shop.service; // El almacén trasero (Servicios) o taller oc
 
 // Herramientas para manejar categorías o abrir los cajones (Repositorios) para sacarlas
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +38,8 @@ public class CategoryService { // Molde del capataz
     @Transactional(readOnly = true)
     public Category findById(Long id) { // Recibe el ID
         // Mandamos buscar el ID... (pero en caso de que no encuentre nada le obligamos a quejarse (Throw))
-        return categoryRepository.findById(id)
+        Long safeId = Objects.requireNonNull(id, "El id de categoría no puede ser null");
+        return categoryRepository.findById(safeId)
                 .orElseThrow(() -> new IllegalArgumentException("Categoría no encontrada: " + id)); // Excepción
     }
 
@@ -57,7 +59,8 @@ public class CategoryService { // Molde del capataz
 
     // Si queremos ELIMINAR.
     public void delete(Long id) {
-        categoryRepository.deleteById(id); // Elimina
+        Long safeId = Objects.requireNonNull(id, "El id de categoría no puede ser null");
+        categoryRepository.deleteById(safeId); // Elimina
     }
 
     // La famosa centrifugadora "toSlug" (Hace que "Zapatillas de Correr!!" se convierta en zapatillas-de-correr" limpio y listo para usarse como URL).

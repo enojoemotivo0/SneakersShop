@@ -11,7 +11,7 @@
 ### 1.1 Objetivos
 
 - Simular un entorno e-commerce real con carrito, checkout, gestión de pedidos y panel de administración.
-- Demostrar el dominio de **Spring Boot**, **JPA**, **Thymeleaf**, **Spring Security**, **MySQL** y **Docker**.
+- Demostrar el dominio de **Spring Boot**, **JPA**, **Thymeleaf**, **Spring Security** y **MySQL**.
 - Ofrecer una experiencia de usuario diferenciada del resto de clones de Nike que predominan en proyectos educativos, con énfasis en el **frontend premium** y un **hero slider animado**.
 - Cumplir en su totalidad la rúbrica del proyecto (50 puntos posibles + 1 bonus).
 
@@ -53,14 +53,14 @@
 
 ### 2.3 Base de datos
 
-- **MySQL 8.0** (producción / Docker)
+- **MySQL 8.0** (entorno local)
 - **H2 Database** (desarrollo, en memoria)
 
-### 2.4 Infraestructura
+### 2.4 Entorno de ejecución
 
-- **Docker** — contenerización de la aplicación
-- **Docker Compose** — orquestación de 3 servicios (app + db + phpMyAdmin)
-- **Alpine Linux** — imagen base ligera para runtime
+- **Windows / Linux** con JDK 17+
+- **Maven Wrapper** (`mvnw`, `mvnw.cmd`) para build reproducible
+- **MySQL local** para el perfil `dev`
 
 ### 2.5 Herramientas
 
@@ -173,7 +173,7 @@ Ver el diagrama completo en [`diagrama-er.md`](diagrama-er.md).
 
 ### 4.4 Estrategia de DDL
 
-En el entorno Docker (`prod`), `spring.jpa.hibernate.ddl-auto=update` deja que Hibernate actualice el esquema, pero `schema.sql` está disponible como referencia canónica y para despliegues manuales.
+En el entorno local, `spring.jpa.hibernate.ddl-auto=update` deja que Hibernate actualice el esquema, pero `schema.sql` está disponible como referencia canónica y para despliegues manuales.
 
 En `dev` (H2), se usa `create-drop` para arrancar siempre limpio.
 
@@ -264,70 +264,43 @@ Todas las páginas usan la estructura semántica recomendada:
 
 ---
 
-## 6. Instrucciones de despliegue
+## 6. Instrucciones de despliegue local
 
 ### 6.1 Requisitos previos
 
-- Docker Desktop 20+ y Docker Compose v2
-- (Opcional) Java 17 + Maven 3.9 si se quiere ejecutar sin Docker
 - Git
+- JDK 17 o superior
+- MySQL local levantado
 - 2 GB de RAM libres
 
-### 6.2 Despliegue con Docker
+### 6.2 Pasos desde clone
 
 ```bash
 git clone https://github.com/<tu-usuario>/snikers-shop.git
 cd snikers-shop
-docker-compose up --build -d
 ```
 
-Tiempo estimado del primer build: **3-5 minutos**.
+Crear base de datos local:
 
-Servicios expuestos:
+```sql
+CREATE DATABASE tienda;
+```
 
-| Servicio | Puerto host | Notas |
-|----------|-------------|-------|
-| Aplicación Spring Boot | 8080 | http://localhost:8080 |
-| MySQL | 3307 | Usuario: snikers / Pass: snikers_pass_2024 |
-| phpMyAdmin | 8081 | http://localhost:8081 |
+Arranque en Windows (recomendado):
 
-### 6.3 Verificación del despliegue
+```powershell
+.\iniciar-app.ps1
+```
+
+Arranque manual alternativo:
 
 ```bash
-# Ver estado de los contenedores
-docker-compose ps
-
-# Ver logs de la app
-docker-compose logs -f app
-
-# Entrar en el contenedor de MySQL
-docker exec -it snikers-db mysql -u snikers -psnikers_pass_2024 snikersdb
+./mvnw spring-boot:run
 ```
 
-Si todo va bien, en los logs de la app aparecerá:
+### 6.3 Verificación
 
-```
-✅ Datos iniciales cargados.
-   Admin: admin@snikers.shop / admin1234
-   Cliente: cliente@snikers.shop / cliente123
-Started SnikersShopApplication in X.XXX seconds
-```
-
-### 6.4 Parar y limpiar
-
-```bash
-docker-compose down           # para los servicios, mantiene volumen
-docker-compose down -v        # + borra el volumen de la BD
-docker system prune -a        # limpia imágenes huérfanas
-```
-
-### 6.5 Despliegue local (sin Docker)
-
-```bash
-./mvnw clean spring-boot:run
-```
-
-Usa el perfil `dev` (H2 en memoria). La consola H2 está disponible en http://localhost:8080/h2-console.
+Si todo va bien, en logs aparecerá el inicio de Spring Boot y la aplicación quedará en http://localhost:8080.
 
 ---
 
@@ -366,11 +339,9 @@ Se ha priorizado testing manual exhaustivo durante la demo dada la naturaleza de
 | Formularios funcionales | Login, registro, checkout, admin | `auth/`, `cart/`, `admin/` |
 | Usabilidad | Diseño cuidado, animaciones, feedback visual | Hero slider, cards con hover, badges |
 | **Sistemas** (10 pt) | | |
-| Entorno Linux | Ubuntu + Docker | `docker-compose.yml` |
-| Dockerfile | Multi-stage build | `Dockerfile` |
-| Docker Compose | 3 servicios orquestados | `docker-compose.yml` |
-| Ejecución funcional | Healthchecks + depends_on | `docker-compose.yml` |
-| Red Docker | `snikers-net` bridge aislada | `docker-compose.yml` |
+| Entorno Linux | Ubuntu con JDK 17 + MySQL | `README.md` |
+| Ejecución local | Maven Wrapper + perfil dev | `mvnw`, `mvnw.cmd` |
+| Base de datos | MySQL local + scripts SQL | `sql/schema.sql`, `sql/data.sql` |
 | **Entornos** (10 pt) | | |
 | Repositorio GitHub | — | README.md |
 | Commits de calidad | Al menos 5, mensajes profesionales | Ver historial |
@@ -410,11 +381,11 @@ Se ha priorizado testing manual exhaustivo durante la demo dada la naturaleza de
 - Eliminar físicamente rompería la integridad histórica.
 - `active = false` oculta del catálogo pero conserva la trazabilidad.
 
-### ¿Por qué multi-stage Dockerfile?
+### ¿Por qué Maven Wrapper para ejecución?
 
-- La imagen final pesa ~180 MB en lugar de ~500 MB (no incluye Maven ni JDK).
-- Menor superficie de ataque.
-- Mejor tiempo de despliegue.
+- Evita depender de una versión global concreta de Maven.
+- Reduce errores de entorno en la exposición.
+- Permite un arranque más consistente entre distintos ordenadores.
 
 ---
 
@@ -440,7 +411,7 @@ El proyecto integra los cinco módulos del ciclo de forma coherente y profesiona
 - La **arquitectura MVC** con separación en capas permite escalabilidad y testabilidad.
 - La **base de datos relacional** respeta las formas normales y la integridad referencial.
 - El **frontend** se diferencia deliberadamente de las tiendas online genéricas, con un hero slider animado y un sistema de diseño editorial propio.
-- **Docker** garantiza que el despliegue sea reproducible en cualquier máquina.
+- **Maven Wrapper + configuración documentada** garantiza un despliegue reproducible en cualquier máquina con Java y MySQL.
 - El **repositorio Git** muestra una evolución incremental del proyecto.
 
 Todo el código está pensado para ser **defendible oralmente**: cada decisión técnica tiene una justificación clara y documentada aquí.

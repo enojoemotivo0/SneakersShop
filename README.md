@@ -69,6 +69,8 @@ Ver los diagramas completos en [`docs/diagrama-er.md`](docs/diagrama-er.md) y [`
 
 ## 🚀 Guía de Instalación y Despliegue
 
+Para un arranque rápido desde clone en otro ordenador, consulta también la guía completa en `docs/GUIA-CLONE-Y-EJECUCION.md`.
+
 Dado que este proyecto **no utiliza contenedores**, depende de que tengas los servicios instalados nativamente en tu sistema. A continuación, se detallan dos métodos completos de ejecución, dependiendo del entorno que vayas a usar.
 
 ### 🪟 Opción A: Ejecución en Windows (Entorno Local o Máquina Virtual)
