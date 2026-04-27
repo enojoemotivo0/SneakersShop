@@ -3,6 +3,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "SnikersShopApplication",
+            "request": "launch",
+            "mainClass": "com.snikers.shop.SnikersShopApplication",
+            "projectName": "snikers-shop"
+        },
+        {
+            "type": "java",
             "name": "Spring Boot - TiendaApplication",
             "request": "launch",
             "mainClass": "com.tienda.TiendaApplication",
