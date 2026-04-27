@@ -246,13 +246,16 @@ snikers-shop/
 │   └── static/
 │       ├── css/main.css              # sistema de diseño (~900 líneas)
 │       └── js/main.js                # slider + interacciones
-├── sql/
-│   ├── schema.sql                    # creación de tablas
-│   └── data.sql                      # datos iniciales
 ├── docs/
+│   ├── init.sql                      # creación de tablas (ejecutar primero)
+│   ├── data.sql                      # datos iniciales
 │   ├── diagrama-er.md                # modelo entidad-relación
 │   ├── diagrama-clases.md            # UML de clases
-│   └── documentacion-tecnica.md      # documentación completa
+│   ├── documentacion-tecnica.md      # documentación técnica completa
+│   ├── memoria-aplicacion.md         # memoria detallada del proyecto
+│   ├── GUIA-CLONE-Y-EJECUCION.md    # guía paso a paso para arrancar
+│   └── GUIA-GIT.md                   # flujo Git del proyecto
+├── iniciar-app.ps1                   # script arranque Windows (auto-detecta JDK)
 ├── pom.xml                           # dependencias Maven
 └── README.md
 ```
@@ -261,11 +264,12 @@ snikers-shop/
 
 ## 📜 Scripts SQL
 
-`sql/schema.sql` crea las 5 tablas con:
-- Claves primarias auto-incrementales
-- Claves foráneas con `ON DELETE CASCADE` / `RESTRICT` según el caso
-- Restricciones `CHECK` para estados y valores mínimos
-- Índices en columnas de búsqueda frecuente
+Los scripts están en `docs/` y deben ejecutarse en orden:
+
+1. `docs/init.sql` — crea la base de datos y las 5 tablas con claves foráneas, restricciones `CHECK` e índices
+2. `docs/data.sql` — inserta categorías, productos y usuarios de demo
+
+> La app también inicializa los datos automáticamente al arrancar si la BD está vacía (`DataInitializer.java`).
 
 ---
 
@@ -284,6 +288,9 @@ Los tests básicos se encuentran en `src/test/java/com/snikers/shop`:
 - [Diagrama Entidad-Relación](docs/diagrama-er.md)
 - [Diagrama de clases](docs/diagrama-clases.md)
 - [Documentación técnica completa](docs/documentacion-tecnica.md)
+- [Memoria de la aplicación](docs/memoria-aplicacion.md)
+- [Guía para clonar y ejecutar](docs/GUIA-CLONE-Y-EJECUCION.md)
+- [Guía Git del proyecto](docs/GUIA-GIT.md)
 
 ---
 
