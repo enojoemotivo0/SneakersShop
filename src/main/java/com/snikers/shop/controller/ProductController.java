@@ -1,10 +1,5 @@
 package com.snikers.shop.controller;
 
-import com.snikers.shop.model.Product;
-import com.snikers.shop.service.CartService;
-import com.snikers.shop.service.CategoryService;
-import com.snikers.shop.service.ProductService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +10,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import com.snikers.shop.model.Product;
+import com.snikers.shop.service.CartService;
+import com.snikers.shop.service.CategoryService;
+import com.snikers.shop.service.ProductService;
+
+import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
