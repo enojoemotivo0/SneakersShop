@@ -76,7 +76,9 @@ public class Order {
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
         if (this.orderNumber == null) {
-            this.orderNumber = "SNK-" + System.currentTimeMillis();
+            // UUID parcial: 4 letras prefijo + 12 caracteres hex → máximo 16 chars (columna length=20)
+            this.orderNumber = "SNK-" + java.util.UUID.randomUUID().toString()
+                    .replace("-", "").substring(0, 12).toUpperCase();
         }
     }
 

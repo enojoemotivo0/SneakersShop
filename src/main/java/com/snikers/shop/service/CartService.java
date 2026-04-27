@@ -25,6 +25,17 @@ public class CartService {
     }
 
     public void add(Product product, int quantity, String size) {
+        // Valida que la cantidad solicitada no supera el stock disponible (incluyendo lo ya reservado)
+        int alreadyInCart = items.stream()
+                .filter(i -> i.getProductId().equals(product.getId())
+                        && java.util.Objects.equals(i.getSize(), size))
+                .mapToInt(CartItem::getQuantity)
+                .sum();
+        if (alreadyInCart + quantity > product.getStock()) {
+            throw new IllegalStateException(
+                    "Stock insuficiente para \u00ab" + product.getName() + "\u00bb. Disponible: "
+                    + (product.getStock() - alreadyInCart));
+        }
         for (CartItem item : items) {
             if (item.getProductId().equals(product.getId())
                     && java.util.Objects.equals(item.getSize(), size)) {
