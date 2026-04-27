@@ -56,4 +56,13 @@ public class UserService implements UserDetailsService {
         User safeUser = Objects.requireNonNull(user, "El usuario no puede ser null");
         return userRepository.save(safeUser);
     }
+
+    // Elimina un usuario por id. Lanza excepcion si no existe.
+    @SuppressWarnings("null")
+    public void delete(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new IllegalArgumentException("Usuario no encontrado con id: " + id);
+        }
+        userRepository.deleteById(id);
+    }
 }

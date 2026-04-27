@@ -20,7 +20,7 @@
      ============================================================ -->
 <section aria-label="Colecciones destacadas">
     <div id="heroCarousel" class="carousel slide carousel-fade"
-         data-bs-ride="carousel" data-bs-interval="6000" data-bs-pause="hover">
+         data-bs-ride="carousel" data-bs-interval="3000" data-bs-pause="hover">
 
         <!-- Los botoncitos o rayitas de abajo del cuadro de fotos para pasar entre ellas -->
         <div class="carousel-indicators">
@@ -36,7 +36,7 @@
             <!-- FOTO 1 (Active significa que es la que se ve primero por defecto) -->
             <div class="carousel-item active">
                 <!-- Capa gigante de fondo negro con la imagen de unas zapatillas descargadas de internet. -->
-                <div style="height: 85vh; min-height: 560px; background-image: url('https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=1920'); background-color: #0a0a0a; background-size: cover; background-position: center; background-repeat: no-repeat;"></div>
+                <div style="height: 85vh; min-height: 560px; background-image: url('https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop'); background-color: #0a0a0a; background-size: cover; background-position: center 40%; background-repeat: no-repeat;"></div>
                 <!-- Una capa extra ligeramente oscurecida (para que destaquen las letras de encima y se pueda leer el título blanco frente al fondo brillante) -->
                 <div class="carousel-caption text-start d-flex flex-column justify-content-center"
                      style="top:0; bottom:0; left:0; right:0; background: linear-gradient(120deg, rgba(10,10,10,.85) 0%, rgba(10,10,10,.35) 50%, rgba(10,10,10,.05) 100%); padding: 3rem 6vw;">
@@ -60,7 +60,7 @@
             </div>
 
             <div class="carousel-item">
-                <div style="height: 85vh; min-height: 560px; background-image: url('https://images.pexels.com/photos/2385477/pexels-photo-2385477.jpeg?auto=compress&cs=tinysrgb&w=1920'); background-color: #0a0a0a; background-size: cover; background-position: center; background-repeat: no-repeat;"></div>
+                <div style="height: 85vh; min-height: 560px; background-image: url('https://images.pexels.com/photos/2385477/pexels-photo-2385477.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop'); background-color: #0a0a0a; background-size: cover; background-position: center 35%; background-repeat: no-repeat;"></div>
                 <div class="carousel-caption text-start d-flex flex-column justify-content-center"
                      style="top:0; bottom:0; left:0; right:0; background: linear-gradient(120deg, rgba(10,10,10,.85) 0%, rgba(10,10,10,.35) 50%, rgba(10,10,10,.05) 100%); padding: 3rem 6vw;">
                     <div style="max-width: 680px;">
@@ -83,7 +83,7 @@
             </div>
 
             <div class="carousel-item">
-                <div style="height: 85vh; min-height: 560px; background-image: url('https://images.pexels.com/photos/1598505/pexels-photo-1598505.jpeg?auto=compress&cs=tinysrgb&w=1920'); background-color: #0a0a0a; background-size: cover; background-position: center; background-repeat: no-repeat;"></div>
+                <div style="height: 85vh; min-height: 560px; background-image: url('https://images.pexels.com/photos/1598505/pexels-photo-1598505.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop'); background-color: #0a0a0a; background-size: cover; background-position: center 30%; background-repeat: no-repeat;"></div>
                 <div class="carousel-caption text-start d-flex flex-column justify-content-center"
                      style="top:0; bottom:0; left:0; right:0; background: linear-gradient(120deg, rgba(10,10,10,.85) 0%, rgba(10,10,10,.35) 50%, rgba(10,10,10,.05) 100%); padding: 3rem 6vw;">
                     <div style="max-width: 680px;">
@@ -106,7 +106,7 @@
             </div>
 
             <div class="carousel-item">
-                <div style="height: 85vh; min-height: 560px; background-image: url('https://images.pexels.com/photos/1598508/pexels-photo-1598508.jpeg?auto=compress&cs=tinysrgb&w=1920'); background-color: #0a0a0a; background-size: cover; background-position: center; background-repeat: no-repeat;"></div>
+                <div style="height: 85vh; min-height: 560px; background-image: url('https://images.pexels.com/photos/1598508/pexels-photo-1598508.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop'); background-color: #0a0a0a; background-size: cover; background-position: center 40%; background-repeat: no-repeat;"></div>
                 <div class="carousel-caption text-start d-flex flex-column justify-content-center"
                      style="top:0; bottom:0; left:0; right:0; background: linear-gradient(120deg, rgba(10,10,10,.85) 0%, rgba(10,10,10,.35) 50%, rgba(10,10,10,.05) 100%); padding: 3rem 6vw;">
                     <div style="max-width: 680px;">
@@ -173,7 +173,7 @@
                    class="snk-category-card">
                     <div class="snk-category-img"
                          th:style="|background-image: url('${iter.index == 0 ? 'https://images.pexels.com/photos/1456706/pexels-photo-1456706.jpeg?auto=compress&cs=tinysrgb&w=800' :
-                                                          iter.index == 1 ? 'https://images.pexels.com/photos/2385478/pexels-photo-2385478.jpeg?auto=compress&cs=tinysrgb&w=800' :
+                                                          iter.index == 1 ? 'https://images.pexels.com/photos/358042/pexels-photo-358042.jpeg?auto=compress&cs=tinysrgb&w=800' :
                                                           iter.index == 2 ? 'https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=800' :
                                                                             'https://images.pexels.com/photos/1598507/pexels-photo-1598507.jpeg?auto=compress&cs=tinysrgb&w=800'}')|"></div>
                     <span class="go-arrow">↗</span>

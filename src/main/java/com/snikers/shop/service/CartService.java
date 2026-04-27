@@ -1,14 +1,16 @@
 package com.snikers.shop.service;
 
-import com.snikers.shop.dto.CartItem;
-import com.snikers.shop.model.Product;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.web.context.annotation.SessionScope;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.web.context.annotation.SessionScope;
+
+import com.snikers.shop.dto.CartItem;
+import com.snikers.shop.model.Product;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * Carrito de compra guardado en sesión HTTP.

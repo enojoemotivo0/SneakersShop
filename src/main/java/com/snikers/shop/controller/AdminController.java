@@ -217,4 +217,18 @@ public class AdminController {
         }
         return "redirect:/admin/users";
     }
+
+    // Elimina un usuario (cliente). No permite borrar al propio admin logueado.
+    @PostMapping("/users/{id}/delete")
+    public String deleteUser(@PathVariable Long id,
+                             org.springframework.security.core.Authentication authentication) {
+        User target = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado: " + id));
+        // Proteccion: el admin no puede borrarse a si mismo
+        if (target.getEmail().equals(authentication.getName())) {
+            return "redirect:/admin/users";
+        }
+        userService.delete(id);
+        return "redirect:/admin/users";
+    }
 }

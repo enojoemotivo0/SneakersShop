@@ -1,22 +1,25 @@
 package com.snikers.shop.controller;
 
-import com.snikers.shop.service.CartService;
-import com.snikers.shop.service.CategoryService;
-import com.snikers.shop.service.ProductService;
-import com.snikers.shop.config.SecurityConfig;
-import com.snikers.shop.service.UserService;
+import java.util.Collections;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.mockito.BDDMockito.given;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.Collections;
-
-import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+
+import com.snikers.shop.config.SecurityConfig;
+import com.snikers.shop.service.CartService;
+import com.snikers.shop.service.CategoryService;
+import com.snikers.shop.service.ProductService;
+import com.snikers.shop.service.UserService;
 
 /**
  * Tests de la capa web para HomeController.
@@ -36,13 +39,17 @@ class HomeControllerTest {
     private CategoryService categoryService;
 
     @MockBean
-    @SuppressWarnings("unused") // Requerido por el contexto Spring, no se usa directamente
     private CartService cartService;
 
     // Necesario para que SecurityConfig pueda construir DaoAuthenticationProvider
     @MockBean
-    @SuppressWarnings("unused")
     private UserService userService;
+
+    @BeforeEach
+    public void init() {
+        // Resetea los mocks antes de cada test (los hace "usados" y evita estado compartido)
+        Mockito.reset(cartService, userService);
+    }
 
     @Test
     void getHome_retorna200YVistaHome() throws Exception {

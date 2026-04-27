@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments/layout :: head(${pageTitle}, 'Gesti�n de clientes y usuarios')}"></head>
 <body class="snk-grain">
 
@@ -29,6 +29,7 @@
                             <th>Email</th>
                             <th>Rol</th>
                             <th>Registro</th>
+                            <th>Acciones</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -48,9 +49,20 @@
                             <td th:text="${u.email}"></td>
                             <td th:text="${u.role.name() == 'ADMIN' ? 'Administrador' : 'Cliente'}"></td>
                             <td th:text="${#temporals.format(u.createdAt, 'dd/MM/yyyy')}"></td>
+                            <td>
+                                <!-- No permitir borrar al propio usuario logueado -->
+                                <form th:unless="${#authentication.name == u.email}"
+                                      th:action="@{/admin/users/{id}/delete(id=${u.id})}"
+                                      method="post"
+                                      onsubmit="return confirm('¿Seguro que quieres eliminar a ' + this.dataset.name + '? Se borrarán también sus pedidos.');"
+                                      th:data-name="${u.fullName}">
+                                    <button type="submit" class="snk-btn" style="background:var(--snk-red);color:#fff;padding:0.3rem 0.8rem;font-size:0.8rem;">Eliminar</button>
+                                </form>
+                                <span th:if="${#authentication.name == u.email}" class="text-muted small">Tú</span>
+                            </td>
                         </tr>
                         <tr th:if="${users.isEmpty()}">
-                            <td colspan="5" style="text-align: center; padding: 2rem;">No hay clientes registrados a�n.</td>
+                            <td colspan="7" style="text-align: center; padding: 2rem;">No hay clientes registrados a�n.</td>
                         </tr>
                         </tbody>
                     </table>

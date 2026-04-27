@@ -1,12 +1,13 @@
 package com.snikers.shop.service;
 
-import com.snikers.shop.model.Product;
+import java.math.BigDecimal;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
-
-import static org.assertj.core.api.Assertions.*;
+import com.snikers.shop.model.Product;
 
 /**
  * Tests unitarios del carrito de compra.
@@ -18,8 +19,7 @@ class CartServiceTest {
     private Product product;
 
     @BeforeEach
-    @SuppressWarnings("unused") // JUnit lo invoca automáticamente antes de cada test
-    void setUp() {
+    public void setUp() {
         cartService = new CartService();
         // Producto de prueba con 5 unidades en stock
         product = Product.builder()
