@@ -30,7 +30,9 @@ out/
 bin/
 
 # --- IDE: VS Code ---
-.vscode/
+.vscode/*
+!.vscode/launch.json
+!.vscode/settings.json
 *.code-workspace
 
 # --- IDE: NetBeans ---
@@ -92,3 +94,6 @@ desktop.ini
 # --- Archivos subidos por usuarios (futuro) ---
 uploads/
 user-content/
+
+# --- Artefactos de herramientas ---
+.github/java-upgrade/
