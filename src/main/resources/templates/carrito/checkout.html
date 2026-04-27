@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head}"></head>
+<body>
+    <header th:replace="~{fragments/nav :: nav}"></header>
+
+    <div class="page-header">
+        <div class="container">
+            <h1><i class="bi bi-credit-card me-2"></i>Finalizar Compra</h1>
+            <p class="subtitle">Introduce tus datos para completar el pedido</p>
+        </div>
+    </div>
+
+    <main class="container" style="padding-bottom:60px;">
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="form-card">
+                    <!-- Amount banner -->
+                    <div style="background:var(--acid); border-radius:2px; padding:14px 18px; display:flex; justify-content:space-between; align-items:center; margin-bottom:32px;">
+                        <span style="font-size:0.72rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink);">Total a pagar</span>
+                        <span class="mono" style="font-size:1.5rem; font-weight:700; color:var(--ink);" th:text="'$' + ${pedido.total}">$0.00</span>
+                    </div>
+
+                    <form th:action="@{/carrito/procesarPago}" method="post">
+                        <!-- Datos personales -->
+                        <h5 style="font-family:'Bebas Neue',sans-serif; font-size:1.3rem; letter-spacing:0.05em; margin-bottom:20px;">
+                            <span style="background:var(--ink); color:var(--acid); display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; font-size:0.9rem; margin-right:8px; font-family:'Inter',sans-serif; font-weight:700;">1</span>
+                            Datos personales
+                        </h5>
+
+                        <div class="field-group">
+                            <label for="nombre" class="field-label">Nombre completo</label>
+                            <input type="text" class="field-input" name="nombre" id="nombre" required placeholder="Ej: Juan Pérez">
+                        </div>
+
+                        <div class="field-group">
+                            <label for="direccion" class="field-label">Dirección de envío</label>
+                            <input type="text" class="field-input" name="direccion" id="direccion" required placeholder="Ej: Calle Principal 123">
+                        </div>
+
+                        <div class="divider" style="margin: 28px 0;"></div>
+
+                        <!-- Método de pago -->
+                        <h5 style="font-family:'Bebas Neue',sans-serif; font-size:1.3rem; letter-spacing:0.05em; margin-bottom:20px;">
+                            <span style="background:var(--ink); color:var(--acid); display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; font-size:0.9rem; margin-right:8px; font-family:'Inter',sans-serif; font-weight:700;">2</span>
+                            Método de pago
+                        </h5>
+
+                        <!-- Card type icons -->
+                        <div style="display:flex; gap:8px; margin-bottom:20px;">
+                            <div style="background:var(--cream); border:1.5px solid var(--border); border-radius:4px; padding:6px 14px; font-size:0.75rem; font-weight:700; color:var(--mid);">VISA</div>
+                            <div style="background:var(--cream); border:1.5px solid var(--border); border-radius:4px; padding:6px 14px; font-size:0.75rem; font-weight:700; color:var(--mid);">MASTERCARD</div>
+                            <div style="background:var(--cream); border:1.5px solid var(--border); border-radius:4px; padding:6px 14px; font-size:0.75rem; font-weight:700; color:var(--mid);">AMEX</div>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="tarjeta" class="field-label"><i class="bi bi-credit-card me-1"></i>Número de tarjeta</label>
+                            <input type="text" class="field-input mono" id="tarjeta" maxlength="16" required placeholder="1234 5678 1234 5678">
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="field-group mb-0">
+                                    <label for="vencimiento" class="field-label">Fecha de vencimiento</label>
+                                    <input type="text" class="field-input mono" id="vencimiento" required placeholder="MM/AA">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="field-group mb-0">
+                                    <label for="cvv" class="field-label">CVV</label>
+                                    <input type="text" class="field-input mono" id="cvv" maxlength="3" required placeholder="123">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top:32px;">
+                            <button type="submit" class="btn-ink w-100 justify-content-center" style="padding:14px; font-size:0.85rem; background:var(--ink); color:var(--acid);">
+                                <i class="bi bi-lock-fill"></i> Confirmar y Pagar
+                            </button>
+                            <div style="text-align:center; margin-top:14px;">
+                                <a th:href="@{/carrito}" style="font-size:0.75rem; color:var(--mid); text-decoration:none;">
+                                    <i class="bi bi-arrow-left me-1"></i>Volver al carrito
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <p style="text-align:center; font-size:0.72rem; color:var(--mid); margin-top:16px;">
+                    <i class="bi bi-shield-check me-1"></i>Simulación de pago — tus datos no se procesan realmente
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

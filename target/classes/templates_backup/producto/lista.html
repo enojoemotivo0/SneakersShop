@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head}"></head>
+<body>
+    <header th:replace="~{fragments/nav :: nav}"></header>
+
+    <main class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Gestión de Productos</h1>
+            <a href="/productos/nuevo" class="btn btn-success">Nuevo Producto</a>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <form th:action="@{/productos}" method="get" class="d-flex">
+                    <input type="text" name="buscar" class="form-control me-2" placeholder="Buscar producto por nombre..." th:value="${buscar}">
+                    <button type="submit" class="btn btn-outline-primary">Buscar</button>
+                    <a th:if="${buscar != null}" th:href="@{/productos}" class="btn btn-outline-secondary ms-2">Limpiar</a>
+                </form>
+            </div>
+        </div>
+
+        <section class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Stock</th>
+                        <th>Categoría</th>
+                        <th>Talla</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="producto : ${productos}">
+                        <td th:text="${producto.id}">1</td>
+                        <td th:text="${producto.nombre}">Café</td>
+                        <td th:text="${producto.precio}">10.00</td>
+                        <td th:text="${producto.stock}">100</td>
+                        <td th:text="${producto.categoria != null ? producto.categoria.nombre : 'Sin Categoría'}">Bebidas</td>
+                        <td th:text="${producto.talla != null ? producto.talla : '-'}">M</td>
+                        <td>
+                            <a th:href="@{/productos/editar/{id}(id=${producto.id})}" class="btn btn-sm btn-primary">Editar</a>
+                            <a th:href="@{/productos/eliminar/{id}(id=${producto.id})}" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro?');">Eliminar</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <!-- Paginación -->
+            <nav th:if="${totalPages > 1}">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                        <a class="page-link" th:href="@{/productos(page=${currentPage - 1}, buscar=${buscar})}">Anterior</a>
+                    </li>
+                    <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${i == currentPage} ? 'active'">
+                        <a class="page-link" th:href="@{/productos(page=${i}, buscar=${buscar})}" th:text="${i + 1}">1</a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                        <a class="page-link" th:href="@{/productos(page=${currentPage + 1}, buscar=${buscar})}">Siguiente</a>
+                    </li>
+                </ul>
+            </nav>
+        </section>
+    </main>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>
