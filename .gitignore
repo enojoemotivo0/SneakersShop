@@ -34,7 +34,8 @@ bin/
 !.vscode/launch.json
 !.vscode/settings.json
 *.code-workspace
-
+# --- GitHub Copilot (archivos generados automáticamente, no son del proyecto) ---
+.github/java-upgrade/
 # --- IDE: NetBeans ---
 nbproject/private/
 nbbuild/
