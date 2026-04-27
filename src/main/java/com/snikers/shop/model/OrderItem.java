@@ -36,24 +36,24 @@ public class OrderItem {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", nullable = false)
+    @JoinColumn(name = "pedido_id", nullable = false)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
+    @JoinColumn(name = "producto_id", nullable = false)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Product product;
 
-    @Column(nullable = false)
+    @Column(name = "cantidad", nullable = false)
     private Integer quantity;
 
-    @Column(nullable = false, precision = 9, scale = 2)
+    @Column(name = "precio_unitario", nullable = false, precision = 9, scale = 2)
     private BigDecimal unitPrice; // precio unitario en el momento de la compra
 
-    @Column(length = 10)
+    @Column(name = "talla", length = 10)
     private String size;
 
     @Transient

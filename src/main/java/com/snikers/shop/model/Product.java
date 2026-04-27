@@ -1,5 +1,6 @@
-package com.snikers.shop.model;
+package com.snikers.shop.model; // Carpeta virtual "modelos" (donde guardamos las fichas o plantillas de las cosas reales).
 
+// Herramientas para números raros (precios) y fechas/horas (cuándo se subió a la web o se modificó).
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -31,79 +32,79 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * Producto (sneaker) de la tienda.
- * Relación N:1 con Category.
+ * Este archivo define qué es un "Producto" (las zapatillas).
+ * Piensa en esto como la etiqueta del precio y especificaciones que cuelga del producto físico.
  */
-@Entity
-@Table(name = "productos", indexes = {
+@Entity // Otra vez: "¡Créame una hoja o tabla en nuestra tienda digital para esto!"
+@Table(name = "productos", indexes = { // "Llama a la carpeta 'productos' y ordena alfabéticamente por 'nombre' y 'marca' para buscar rápido."
         @Index(name = "idx_product_name", columnList = "name"),
         @Index(name = "idx_product_brand", columnList = "brand")
 })
-@Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Getter @Setter // Magia para autogenerar el poder de cambiar o leer la talla, nombre, etc. sin escribir tanto.
+@NoArgsConstructor // Molde en blanco
+@AllArgsConstructor // Molde rellenado
+@Builder // Para crearlo paso a paso 
 public class Product {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Id // El 'código de barras'. Único e irrepetible.
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // "Sumálos 1, 2, 3..." para que no nos liemos buscando qué número estaba libre.
+    private Long id; // El recipiente de ese número.
 
-    @NotBlank(message = "El nombre es obligatorio")
-    @Size(min = 2, max = 120)
-    @Column(nullable = false, length = 120)
-    private String name;
+    @NotBlank(message = "El nombre es obligatorio") // Freno de mano: ¡No puedes crear zapatilla sin nombre!
+    @Size(min = 2, max = 120) // Ni muy corto ni súper largo.
+    @Column(name = "nombre", nullable = false, length = 120) // Lo reforzamos también en la propia base de datos (sin él da error al guardar).
+    private String name; // Contenedor del nombre real.
 
     @NotBlank(message = "La marca es obligatoria")
     @Size(max = 60)
-    @Column(nullable = false, length = 60)
-    private String brand;
+    @Column(name = "marca", nullable = false, length = 60) // Refuerzos.
+    private String brand; // La marca (Ej: Onyx, Shred).
 
     @Size(max = 2000)
-    @Column(length = 2000)
-    private String description;
+    @Column(name = "descripcion", length = 2000) // Mucho más margen aquí, como 2000 letras ("texto largo")
+    private String description; // Donde va la charleta o cuento comercial describiendo cómo es la zapatilla.
 
-    @NotNull(message = "El precio es obligatorio")
-    @DecimalMin(value = "0.01", message = "El precio debe ser mayor que 0")
-    @Digits(integer = 7, fraction = 2)
-    @Column(nullable = false, precision = 9, scale = 2)
-    private BigDecimal price;
+    @NotNull(message = "El precio es obligatorio") // ¿Una zapatilla sin precio? ¡Ni hablar!
+    @DecimalMin(value = "0.01", message = "El precio debe ser mayor que 0") // ¿Gratis? No aquí.
+    @Digits(integer = 7, fraction = 2) // Un montón de números posibles y máximo dos céntimos (dos decimales).
+    @Column(name = "precio", nullable = false, precision = 9, scale = 2) // Lo aseguramos
+    private BigDecimal price; // El contenedor de precios y céntimos.
 
-    @Column(precision = 9, scale = 2)
-    private BigDecimal originalPrice; // Para mostrar descuentos
+    @Column(name = "precio_original", precision = 9, scale = 2) 
+    private BigDecimal originalPrice; // Si está de oferta, nos sirve para pintar la caja roja que dice: "Antes: XX".
 
-    @NotNull(message = "El stock es obligatorio")
-    @Min(value = 0, message = "El stock no puede ser negativo")
-    @Column(nullable = false)
-    private Integer stock;
+    @NotNull(message = "El stock es obligatorio") 
+    @Min(value = 0, message = "El stock no puede ser negativo") // Nada de tener "-3" zapatillas en el almacén.
+    @Column(name = "cantidad_stock", nullable = false)
+    private Integer stock; // Las unidades que sobran en la trastienda.
 
-    @Size(max = 255)
-    @Column(length = 255)
+    @jakarta.persistence.Lob
+    @Column(name = "url_imagen", columnDefinition = "MEDIUMTEXT")
     private String imageUrl;
 
     @Size(max = 30)
-    @Column(length = 30)
+    @Column(name = "color", length = 30)
     private String color;
 
-    @Column(length = 20)
+    @Column(name = "rango_tallas", length = 20)
     private String sizeRange; // Ej: "38-46"
 
-    @Column(nullable = false)
+    @Column(name = "destacado", nullable = false)
     @Builder.Default
     private Boolean featured = false;
 
-    @Column(nullable = false)
+    @Column(name = "activo", nullable = false)
     @Builder.Default
     private Boolean active = true;
 
-    @Column(nullable = false, updatable = false)
+    @Column(name = "fecha_creacion", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column
+    @Column(name = "fecha_actualizacion")
     private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "categoria_id", nullable = false)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Category category;

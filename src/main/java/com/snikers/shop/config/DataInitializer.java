@@ -1,34 +1,46 @@
-package com.snikers.shop.config;
+package com.snikers.shop.config; // La carpeta virtual de configuraciones.
 
+// Herramientas que nos permiten manejar números (precios) y listas de cosas.
 import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component; // Para encriptar las claves de prueba
 
 import com.snikers.shop.model.Category;
 import com.snikers.shop.model.Product;
+import com.snikers.shop.model.User; // Molde de los usuarios
 import com.snikers.shop.repository.CategoryRepository;
 import com.snikers.shop.repository.ProductRepository;
+import com.snikers.shop.repository.UserRepository; // Mozo de usuarios
 
 import lombok.RequiredArgsConstructor;
 
 /**
- * Inicializa la BD con datos de demo al arrancar la aplicación.
- * Solo se ejecuta si no hay datos.
+ * Este archivo es como el "Reponedor Automático" de la tienda.
+ * Sirve para que, la primera vez que enciendas la página y la tienda esté vacía,
+ * automáticamente coloque unas cuantas zapatillas de ejemplo en las estanterías (base de datos),
+ * para que no se vea todo en blanco.
  */
-@Component
-@RequiredArgsConstructor
-public class DataInitializer implements CommandLineRunner {
+@Component // Le decimos a la tienda: "Oye, este archivo es un empleado tuyo. Tenlo en cuenta."
+@RequiredArgsConstructor // Le damos magia a nuestro empleado para conectar las piezas.
+public class DataInitializer implements CommandLineRunner { // "CommandLineRunner" significa que corre automáticamente al arrancar.
 
+    // Nuestro reponedor necesita acceso a los armarios donde se guardan categorías y productos.
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
+    private final UserRepository userRepository; // El armario de usuarios
+    private final PasswordEncoder passwordEncoder; // La trituradora de contraseñas
 
+    // Aquí están las instrucciones exactas de qué debe hacer el reponedor cuando entra a trabajar.
     @Override
     public void run(String... args) {
+        // Primero, mira los estantes. Si ya hay categorías (es decir, ya hay datos),
+        // dice "ah, ya hay cosas", se da la vuelta y se va sin hacer nada.
         if (categoryRepository.count() > 0) return;
 
-        // ===== Categorías =====
+        // ===== Se inventan las Categorías (los carteles de los pasillos) y se guardan =====
         Category running = categoryRepository.save(Category.builder()
                 .name("Running")
                 .slug("running")
@@ -53,20 +65,21 @@ public class DataInitializer implements CommandLineRunner {
                 .description("Modelos resistentes diseñados para skaters: suela vulcanizada y durabilidad.")
                 .build());
 
-        // ===== Productos =====
+        // ===== Se inventa un montón de zapatillas de ejemplo, poniéndolas en sus categorías y asignando fotos ====
         productRepository.saveAll(List.of(
                 Product.builder()
                         .name("Air Prime Nova 91")
-                        .brand("Aeroline")
+                        .brand("Aeroline") // Marca
                         .description("Amortiguación de aire visible, upper de malla ingeniería y suela de espuma energy-return. La elegida por corredores profesionales.")
-                        .price(new BigDecimal("189.99"))
-                        .originalPrice(new BigDecimal("229.99"))
-                        .stock(42)
+                        .price(new BigDecimal("189.99")) // Precio normal
+                        .originalPrice(new BigDecimal("229.99")) // Precio original antes de rebajas
+                        .stock(42) // Cuántas tenemos en almacén
                         .color("Negro / Volt")
                         .sizeRange("38-47")
-                        .imageUrl("https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1200&q=80")
-                        .featured(true).active(true).category(running).build(),
+                        .imageUrl("https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1200&q=80") // Enlace a la foto
+                        .featured(true).active(true).category(running).build(), // destacado = si, activa = si, categoria = running
 
+                // Repite el proceso para crear más zapatillas...
                 Product.builder()
                         .name("Court Revolt Hyper")
                         .brand("Onyx")
@@ -146,6 +159,27 @@ public class DataInitializer implements CommandLineRunner {
                         .featured(false).active(true).category(skate).build()
         ));
 
-        System.out.println("✅ Datos iniciales cargados (solo categorías y productos).");
+        // ===== Se inventan los usuarios de prueba =====
+        // Como la página los anuncia en la pantalla de Log-in, tenemos que asegurarnos de que el reponedor automático los cree siempre.
+        if (!userRepository.existsByEmail("cliente@snikers.shop")) {
+            userRepository.save(User.builder()
+                    .fullName("Cliente de Prueba")
+                    .email("cliente@snikers.shop")
+                    .password(passwordEncoder.encode("cliente123"))
+                    .role(User.Role.CLIENTE)
+                    .build());
+        }
+
+        if (!userRepository.existsByEmail("admin@snikers.shop")) {
+            userRepository.save(User.builder()
+                    .fullName("Admin de Prueba")
+                    .email("admin@snikers.shop")
+                    .password(passwordEncoder.encode("admin1234"))
+                    .role(User.Role.ADMINISTRADOR)
+                    .build());
+        }
+
+        // Cuando termina, imprime este mensaje de satisfacción en la pantallita negra de herramientas (consola).
+        System.out.println("✅ Datos iniciales cargados (categorías, productos y usuarios de prueba).");
     }
 }

@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 @Controller
 @RequestMapping("/checkout")
 @RequiredArgsConstructor
+// Gestiona el flujo de finalizacion de compra.
 public class CheckoutController {
 
     private final CartService cartService;
@@ -29,12 +30,15 @@ public class CheckoutController {
     private final UserService userService;
     private final CategoryService categoryService;
 
+    // Disponible en todas las vistas: contador de items en carrito.
     @ModelAttribute("cartCount")
     public int cartCount() { return cartService.getTotalItems(); }
 
+    // Disponible en todas las vistas: categorias para menu/filtros.
     @ModelAttribute("allCategories")
     public Object allCategories() { return categoryService.findAll(); }
 
+    // Muestra el formulario de checkout con datos actuales del usuario autenticado.
     @GetMapping
     public String checkoutForm(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         if (cartService.isEmpty()) return "redirect:/cart";
@@ -46,6 +50,7 @@ public class CheckoutController {
         return "cart/checkout";
     }
 
+    // Confirma la compra, actualiza datos del usuario y genera el pedido desde el carrito.
     @PostMapping
     public String processCheckout(@AuthenticationPrincipal UserDetails userDetails,
                                   @RequestParam String shippingAddress,
@@ -57,7 +62,7 @@ public class CheckoutController {
         
         User user = userService.findByEmail(userDetails.getUsername());
         
-        // Actualizar datos del usuario si los ha cambiado en el formulario
+        // Actualiza datos del perfil solo si hubo cambios en el formulario.
         boolean updated = false;
         if (fullName != null && !fullName.isBlank() && !fullName.equals(user.getFullName())) {
             user.setFullName(fullName);
@@ -67,12 +72,11 @@ public class CheckoutController {
             user.setPhone(phone);
             updated = true;
         }
+        boolean emailUpdated = false;
         if (email != null && !email.isBlank() && !email.equals(user.getEmail())) {
-            // Nota: Si el email se usa para el login y se cambia aquí, 
-            // la sesión de Spring Security actual mantiene el nombre de usuario antiguo.
-            // En una aplicación real habría que forzar la reautenticación u actualizar el principal.
             user.setEmail(email);
             updated = true;
+            emailUpdated = true;
         }
         if (shippingAddress != null && !shippingAddress.isBlank() && !shippingAddress.equals(user.getAddress())) {
             user.setAddress(shippingAddress);
@@ -81,8 +85,19 @@ public class CheckoutController {
         
         if (updated) {
             userService.update(user);
+            if (emailUpdated) {
+            // Si cambia email, refresca el principal de seguridad con el nuevo username.
+                org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(
+                        new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
+                                userService.loadUserByUsername(email), 
+                                org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getCredentials(), 
+                                org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                        )
+                );
+            }
         }
         
+        // Crea el pedido, vacia carrito y redirige a detalle con flag de confirmacion.
         Order order = orderService.createFromCart(user, cartService.getItems(), shippingAddress);
         cartService.clear();
         return "redirect:/orders/" + order.getId() + "?confirmed=true";

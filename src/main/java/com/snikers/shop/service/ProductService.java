@@ -79,8 +79,8 @@ public class ProductService {
         existing.setImageUrl(updated.getImageUrl());
         existing.setColor(updated.getColor());
         existing.setSizeRange(updated.getSizeRange());
-        existing.setFeatured(updated.getFeatured() != null ? updated.getFeatured() : false);
-        existing.setActive(updated.getActive() != null ? updated.getActive() : true);
+        existing.setFeatured(updated.getFeatured() != null ? updated.getFeatured() : Boolean.FALSE);
+        existing.setActive(updated.getActive() != null ? updated.getActive() : Boolean.TRUE);
         if (updated.getCategory() != null) existing.setCategory(updated.getCategory());
         return productRepository.save(existing);
     }

@@ -17,7 +17,7 @@
                 <a th:href="@{/admin/products}" class="snk-link-arrow">← Volver</a>
             </div>
 
-            <form th:action="@{/admin/products}" method="post" th:object="${product}" class="snk-card">
+            <form th:action="@{/admin/products}" method="post" th:object="${product}" class="snk-card" enctype="multipart/form-data">
                 <input type="hidden" th:field="*{id}">
 
                 <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
@@ -75,9 +75,10 @@
                 </div>
 
                 <div class="snk-mt-3">
-                    <label class="snk-form-label">URL de la imagen</label>
-                    <input type="url" th:field="*{imageUrl}" class="snk-form-control"
-                           placeholder="https://...">
+                    <label class="snk-form-label">Foto del Producto</label>
+                    <input type="hidden" th:field="*{imageUrl}">
+                    <input type="file" name="photoFile" accept="image/*" class="snk-form-control">
+                    <small style="color: var(--snk-mid); font-size: 0.8rem; margin-top: 4px; display: block;">Opcional. Selecciona un archivo para actualizar la imagen actual.</small>
                 </div>
 
                 <div class="snk-mt-3 d-flex gap-3">

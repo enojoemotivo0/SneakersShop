@@ -69,6 +69,7 @@ git commit -m "feat(core): servicios de negocio y Spring Security
 git add src/main/java/com/snikers/shop/controller/
 git commit -m "feat(web): controladores MVC y flujos de la aplicación
 
+- 7 controladores MVC + 1 manejador global de excepciones (8 clases en total)
 - HomeController (página principal con productos destacados)
 - ProductController (catálogo, detalle, búsqueda, paginación)
 - CartController + CheckoutController (carrito y compra)

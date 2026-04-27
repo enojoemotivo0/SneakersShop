@@ -1,5 +1,8 @@
 package com.snikers.shop.controller;
 
+import java.io.IOException;
+import java.util.Base64;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -9,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.snikers.shop.model.Category;
 import com.snikers.shop.model.Order;
@@ -27,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 @Controller
 @RequestMapping("/admin")
 @RequiredArgsConstructor
+// Backoffice de administracion: productos, categorias, pedidos y usuarios.
 public class AdminController {
 
     private final ProductService productService;
@@ -36,13 +41,16 @@ public class AdminController {
     private final UserService userService;
     private final UserRepository userRepository;
 
+    // Disponible en todas las vistas: contador del carrito.
     @ModelAttribute("cartCount")
     public int cartCount() { return cartService.getTotalItems(); }
 
+    // Disponible en todas las vistas: categorias para menu global.
     @ModelAttribute("allCategories")
     public Object allCategories() { return categoryService.findAll(); }
 
     // ---------- Dashboard ----------
+    // Vista principal del panel con metricas basicas.
     @GetMapping
     public String dashboard(Model model) {
         model.addAttribute("totalProducts", productService.count());
@@ -54,6 +62,7 @@ public class AdminController {
     }
 
     // ---------- Productos ----------
+    // Listado de productos visibles desde administracion.
     @GetMapping("/products")
     public String products(Model model) {
         model.addAttribute("products", productService.findAllActive());
@@ -61,6 +70,7 @@ public class AdminController {
         return "admin/products";
     }
 
+    // Formulario para crear producto nuevo.
     @GetMapping("/products/new")
     public String newProductForm(Model model) {
         model.addAttribute("product", new Product());
@@ -69,6 +79,7 @@ public class AdminController {
         return "admin/product-form";
     }
 
+    // Formulario para editar un producto existente.
     @GetMapping("/products/{id}/edit")
     public String editProductForm(@PathVariable Long id, Model model) {
         model.addAttribute("product", productService.findById(id));
@@ -77,16 +88,30 @@ public class AdminController {
         return "admin/product-form";
     }
 
+    // Crea o actualiza un producto segun si viene con id nulo o no.
     @PostMapping("/products")
     public String saveProduct(@Valid @ModelAttribute("product") Product product,
                               BindingResult bindingResult,
                               @RequestParam Long categoryId,
+                              @RequestParam(value = "photoFile", required = false) org.springframework.web.multipart.MultipartFile photoFile,
                               Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("categories", categoryService.findAll());
             model.addAttribute("pageTitle", "Nuevo producto");
             return "admin/product-form";
         }
+        
+        if (photoFile != null && !photoFile.isEmpty()) {
+            try {
+                // Guarda la imagen como Data URI para mostrarla sin almacenamiento externo.
+                String base64Image = java.util.Base64.getEncoder().encodeToString(photoFile.getBytes());
+                product.setImageUrl("data:" + photoFile.getContentType() + ";base64," + base64Image);
+            } catch (java.io.IOException e) {
+                // Ignore silent update error when trying to parse image bytes
+                System.err.println("Error procesando imagen: " + e.getMessage());
+            }
+        }
+        
         product.setCategory(categoryService.findById(categoryId));
         if (product.getId() == null) {
             productService.save(product);
@@ -96,6 +121,7 @@ public class AdminController {
         return "redirect:/admin/products";
     }
 
+    // Baja logica del producto (no lo elimina fisicamente).
     @PostMapping("/products/{id}/delete")
     public String deleteProduct(@PathVariable Long id) {
         productService.softDelete(id);
@@ -103,6 +129,7 @@ public class AdminController {
     }
 
     // ---------- Categorías ----------
+    // Gestion de categorias.
     @GetMapping("/categories")
     public String categories(Model model) {
         model.addAttribute("categories", categoryService.findAll());
@@ -111,6 +138,7 @@ public class AdminController {
         return "admin/categories";
     }
 
+    // Crea una categoria nueva.
     @PostMapping("/categories")
     public String saveCategory(@Valid @ModelAttribute("category") Category category,
                                BindingResult bindingResult,
@@ -123,6 +151,7 @@ public class AdminController {
         return "redirect:/admin/categories";
     }
 
+    // Elimina una categoria por id.
     @PostMapping("/categories/{id}/delete")
     public String deleteCategory(@PathVariable Long id) {
         categoryService.delete(id);
@@ -130,6 +159,7 @@ public class AdminController {
     }
 
     // ---------- Pedidos ----------
+    // Listado de pedidos para seguimiento administrativo.
     @GetMapping("/orders")
     public String orders(Model model) {
         model.addAttribute("orders", orderService.findAll());
@@ -137,6 +167,7 @@ public class AdminController {
         return "admin/orders";
     }
 
+    // Actualiza el estado de un pedido (ej: PENDIENTE, ENVIADO, etc.).
     @PostMapping("/orders/{id}/status")
     public String updateOrderStatus(@PathVariable Long id, @RequestParam String status) {
         orderService.updateStatus(id, Order.Status.valueOf(status));
@@ -144,6 +175,7 @@ public class AdminController {
     }
 
     // ---------- Usuarios / Clientes ----------
+    // Gestion de usuarios registrados.
     @GetMapping("/users")
     public String users(Model model) {
         model.addAttribute("users", userRepository.findAll());
@@ -152,18 +184,28 @@ public class AdminController {
         return "admin/users";
     }
 
+    // Crea un usuario desde admin y opcionalmente su foto de perfil.
     @PostMapping("/users")
     public String saveUser(@Valid @ModelAttribute("user") User user,
                            BindingResult bindingResult,
+                           @RequestParam(value = "photoFile", required = false) MultipartFile photoFile,
                            Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("users", userRepository.findAll());
             return "admin/users";
         }
         try {
+            if (photoFile != null && !photoFile.isEmpty()) {
+                String base64Image = Base64.getEncoder().encodeToString(photoFile.getBytes());
+                user.setProfilePicture("data:" + photoFile.getContentType() + ";base64," + base64Image);
+            }
             userService.register(user);
         } catch(IllegalArgumentException e) {
             bindingResult.rejectValue("email", "error.user", e.getMessage());
+            model.addAttribute("users", userRepository.findAll());
+            return "admin/users";
+        } catch(IOException e) {
+            model.addAttribute("errorMessage", "Error al procesar la foto de perfil.");
             model.addAttribute("users", userRepository.findAll());
             return "admin/users";
         }

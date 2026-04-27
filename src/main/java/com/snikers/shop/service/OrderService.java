@@ -1,14 +1,19 @@
 package com.snikers.shop.service;
 
-import com.snikers.shop.dto.CartItem;
-import com.snikers.shop.model.*;
-import com.snikers.shop.repository.OrderRepository;
-import lombok.RequiredArgsConstructor;
+import java.math.BigDecimal;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.List;
+import com.snikers.shop.dto.CartItem;
+import com.snikers.shop.model.Order;
+import com.snikers.shop.model.OrderItem;
+import com.snikers.shop.model.Product;
+import com.snikers.shop.model.User;
+import com.snikers.shop.repository.OrderRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +31,7 @@ public class OrderService {
         Order order = Order.builder()
                 .user(user)
                 .shippingAddress(shippingAddress)
-                .status(Order.Status.PENDING)
+                .status(Order.Status.PENDIENTE)
                 .total(BigDecimal.ZERO)
                 .build();
 

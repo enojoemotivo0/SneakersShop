@@ -1,25 +1,24 @@
 # 👟 SNIKERS SHOP
 
-> Tienda premium de sneakers construida con Spring Boot · Thymeleaf · MySQL · Docker
+> Tienda premium de sneakers construida con Spring Boot · Thymeleaf · MySQL
 
 **Proyecto Transversal Final** · 2º DAM/DAW · Curso 2025-2026
 
 ![Java](https://img.shields.io/badge/Java-17-orange)
 ![Spring](https://img.shields.io/badge/Spring_Boot-3.2-green)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0-blue)
-![Docker](https://img.shields.io/badge/Docker-Ready-2496ED)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ---
 
 ## 📋 Descripción
 
-**Snikers Shop** es un e-commerce monolítico especializado en sneakers premium, diseñado como simulación real de un entorno profesional. El proyecto integra los 5 módulos del ciclo formativo:
+**Snikers Shop** es un e-commerce monolítico especializado en sneakers premium, diseñado como simulación real de un entorno profesional. El proyecto integra los módulos del ciclo formativo:
 
 - **Programación** — backend en Java + Spring Boot
 - **Bases de Datos** — MySQL 8 con 5 tablas relacionadas
 - **Lenguaje de Marcas + SEO** — Thymeleaf, Bootstrap 5 y meta tags
-- **Sistemas Informáticos** — despliegue con Docker Compose
+- **Sistemas Informáticos** — configuración de máquinas virtuales y bases de datos locales
 - **Entornos de Desarrollo** — Git, versionado, documentación
 
 ---
@@ -36,7 +35,6 @@
 | Framework CSS | Bootstrap 5.3 + CSS propio |
 | Base de datos | MySQL 8.0 (producción) / H2 (dev) |
 | Build | Maven 3.9 |
-| Contenedores | Docker + Docker Compose |
 | Validación | Bean Validation (Jakarta) |
 | Utilidades | Lombok |
 
@@ -69,49 +67,96 @@ Ver los diagramas completos en [`docs/diagrama-er.md`](docs/diagrama-er.md) y [`
 
 ---
 
-## ⚙️ Instalación y despliegue
+## 🚀 Guía de Instalación y Despliegue
 
-### Opción A: con Docker (recomendada)
+Dado que este proyecto **no utiliza contenedores**, depende de que tengas los servicios instalados nativamente en tu sistema. A continuación, se detallan dos métodos completos de ejecución, dependiendo del entorno que vayas a usar.
 
-Requiere tener instalado **Docker** y **Docker Compose**.
+### 🪟 Opción A: Ejecución en Windows (Entorno Local o Máquina Virtual)
 
-```bash
-# 1. Clonar el repositorio
-git clone https://github.com/<tu-usuario>/snikers-shop.git
-cd snikers-shop
+Este es el proceso recomendado para desarrollar o ejecutar el proyecto en un ordenador con Windows, apoyándose en herramientas visuales.
 
-# 2. Levantar todo el stack (app + MySQL + phpMyAdmin)
-docker-compose up --build -d
+**0. Requisitos indispensables:**
+- **JDK 17** (Java Development Kit) instalado y configurado en el `PATH` del sistema.
+- **Git** instalado para clonar el código.
+- **XAMPP** o **WAMP Server** instalados (nos proporcionarán MySQL y phpMyAdmin de forma sencilla).
+- Un IDE como **Visual Studio Code** o **IntelliJ IDEA**.
 
-# 3. Verificar que los contenedores están sanos
-docker-compose ps
-```
+**Pasos de ejecución:**
 
-Acceso a los servicios:
+1. **Levantar el servidor web y la Base de Datos:**
+   * Abre el Panel de Control de XAMPP (o WAMP).
+   * Haz clic en **"Start"** en los módulos de **Apache** y **MySQL**.
+2. **Crear la base de datos de la tienda:**
+   * Abre tu navegador y dirígete a `http://localhost/phpmyadmin`.
+   * En el menú lateral izquierdo, pulsa en "Nueva".
+   * Escribe el nombre de la base de datos: **`tienda`** (respeta las minúsculas).
+   * No necesitas crear tablas ni importar archivos `.sql` manuales, Spring Boot se encargará de ello gracias a su configuración de *Hibernate*.
+3. **Obtener el código fuente:**
+   * Abre una terminal (PowerShell o CMD) en la carpeta donde quieras guardar el proyecto.
+   * Ejecuta: 
+     ```bash
+     git clone https://github.com/enojoemotivo0/SneakersShop.git
+     cd Sneaker-shop2
+     ```
+4. **Configurar credenciales (Opcional):**
+   * Abre el proyecto en tu IDE (VS Code).
+   * Revisa el archivo `src/main/resources/application-dev.properties`.
+   * Por defecto, está configurado para conectarse al usuario `root` de MySQL sin contraseña (`spring.datasource.password=`), que es el estándar de XAMPP. Si tu base de datos tiene contraseña, escríbela ahí.
+5. **Ejecutar la aplicación:**
+   * Si usas VS Code: Abre el archivo `SnikersShopApplication.java` y pulsa "Run" encima de la función `main`.
+   * Alternativa por consola: Ejecuta el comando `mvn spring-boot:run` o usa el wrapper `./mvnw spring-boot:run`.
+6. **¡Listo!** Abre el navegador y visita: `http://localhost:8080`
 
-| Servicio | URL | Notas |
-|----------|-----|-------|
-| 🛒 Tienda | http://localhost:8080 | Aplicación principal |
-| 🔐 Admin | http://localhost:8080/admin | Login con admin@snikers.shop |
-| 🗄️ phpMyAdmin | http://localhost:8081 | Inspección de la BD |
-| 🐬 MySQL | localhost:3307 | Conexión directa (expuesto en 3307 para no chocar con MySQL nativo) |
+---
 
-Para detener todo:
+### 🐧 Opción B: Ejecución en Linux (Máquina Virtual Ubuntu / Debian)
 
-```bash
-docker-compose down           # conserva los datos
-docker-compose down -v        # borra también el volumen de la BD
-```
+Este entorno simula un despliegue más parecido a producción. Operarás por 100% por comandos.
 
-### Opción B: local sin Docker (perfil dev con H2)
+**Pasos de ejecución:**
 
-```bash
-./mvnw spring-boot:run
-# o en Windows:
-mvnw.cmd spring-boot:run
-```
+1. **Actualizar repositorios del sistema:**
+   ```bash
+   sudo apt update && sudo apt upgrade -y
+   ```
+2. **Instalar los paquetes necesarios:**
+   Instalaremos Git, el motor de Java 17, el servidor de bases de datos MySQL y la herramienta Maven de compilación.
+   ```bash
+   sudo apt install git openjdk-17-jdk mysql-server maven -y
+   ```
+3. **Gestión y securización de la Base de Datos MySQL:**
+   * Comprueba que MySQL está corriendo: `sudo systemctl status mysql` (Debería salir activo/verde).
+   * Abre la terminal interactiva de MySQL:
+     ```bash
+     sudo mysql -u root
+     ```
+   * Una vez dentro del prompt `mysql>`, lanza estos comandos SQL para preparar la BD y el usuario:
+     ```sql
+     -- Crear la base de datos
+     CREATE DATABASE tienda;
+     
+     -- Crear un usuario específico y otorgarle permisos totales sobre la base de datos
+     CREATE USER 'root'@'localhost' IDENTIFIED BY '';
+     GRANT ALL PRIVILEGES ON tienda.* TO 'root'@'localhost';
+     FLUSH PRIVILEGES;
 
-La aplicación arranca en http://localhost:8080 usando una BD H2 en memoria. Ideal para pruebas rápidas.
+     -- Salir de la terminal MySQL
+     EXIT;
+     ```
+   * *Nótese que por motivos de compatibilidad con el properties por defecto se usó la password vacía. En un caso real se usa contraseña segura.*
+4. **Clonar el proyecto:**
+   ```bash
+   git clone https://github.com/enojoemotivo0/SneakersShop.git
+   cd Sneaker-shop2
+   ```
+5. **Compilar y ejecutar la aplicación:**
+   * Al ejecutar este comando, Maven descargará automáticamente las dependencias de Spring Boot, compilará el código `.java` e iniciará el servidor embebido Tomcat.
+   ```bash
+   mvn spring-boot:run
+   ```
+6. **Verificar el servicio:**
+   * Si estás trabajando dentro de una interfaz gráfica de Ubuntu, abre Firefox y entra a `http://localhost:8080`.
+   * Si es una Máquina Virtual en modo "Bridge" o con reenvío de puertos desde puente, utiliza la IP de la máquina: `http://<IP_MAQUINA_LINUX>:8080` desde tu ordenador anfitrión.
 
 ---
 
@@ -206,32 +251,9 @@ snikers-shop/
 │   ├── diagrama-er.md                # modelo entidad-relación
 │   ├── diagrama-clases.md            # UML de clases
 │   └── documentacion-tecnica.md      # documentación completa
-├── Dockerfile                        # imagen multi-stage
-├── docker-compose.yml                # app + MySQL + phpMyAdmin
 ├── pom.xml                           # dependencias Maven
 └── README.md
 ```
-
----
-
-## 🐳 Docker: detalles técnicos
-
-`docker-compose.yml` define 3 servicios en una red aislada (`snikers-net`):
-
-1. **db** — MySQL 8.0
-   - Volumen persistente `snikers-db-data`
-   - Scripts de inicialización (`schema.sql`, `data.sql`)
-   - Healthcheck con `mysqladmin ping`
-
-2. **app** — Spring Boot
-   - Build multi-stage (JDK para compilar, JRE Alpine para ejecutar)
-   - Usuario no-root dentro del contenedor
-   - `depends_on` con `condition: service_healthy` para esperar a la BD
-   - Healthcheck HTTP contra el endpoint raíz
-
-3. **phpmyadmin** — Interfaz web de MySQL
-   - Accesible en http://localhost:8081
-   - Útil para debugging durante la defensa
 
 ---
 

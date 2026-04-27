@@ -1,20 +1,28 @@
 <!DOCTYPE html>
+<!-- 
+  Este archivo es "La Pantalla Principal". Es la carcasa o plantilla HTML que el navegador web dibuja.
+  Las partes "th:" o "sec:" son trucos visuales especiales (Thymeleaf) para rellenar, con datos reales
+  de la tienda, los huecos de la página (por ejemplo, el nombre "Juan" o la foto de una "Zapatilla") antes de mandarla.
+-->
 <html lang="es"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!-- Como construir la caja superior de todas las web (Títulos, fotos miniatura, iconos...) "Robandolo" del archivo "fragments/layout.html" -->
 <head th:replace="~{fragments/layout :: head(${pageTitle}, ${pageDescription})}">
 </head>
 <body>
 
+<!-- Ponme la "Barra de navegación de arriba" (Navbar) automática con todos los botones (robandola tambien de otro lado) -->
 <header th:replace="~{fragments/layout :: navbar}"></header>
 
 <!-- ============================================================
-     HERO CAROUSEL — Bootstrap nativo + paleta volt
+     HERO CAROUSEL — Carrusel automático de imágenes gigantes (Slider)
      ============================================================ -->
 <section aria-label="Colecciones destacadas">
     <div id="heroCarousel" class="carousel slide carousel-fade"
          data-bs-ride="carousel" data-bs-interval="6000" data-bs-pause="hover">
 
+        <!-- Los botoncitos o rayitas de abajo del cuadro de fotos para pasar entre ellas -->
         <div class="carousel-indicators">
             <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0"
                     class="active" aria-current="true" aria-label="Slide 1"></button>
@@ -25,8 +33,11 @@
 
         <div class="carousel-inner">
 
+            <!-- FOTO 1 (Active significa que es la que se ve primero por defecto) -->
             <div class="carousel-item active">
+                <!-- Capa gigante de fondo negro con la imagen de unas zapatillas descargadas de internet. -->
                 <div style="height: 85vh; min-height: 560px; background-image: url('https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=1920'); background-color: #0a0a0a; background-size: cover; background-position: center; background-repeat: no-repeat;"></div>
+                <!-- Una capa extra ligeramente oscurecida (para que destaquen las letras de encima y se pueda leer el título blanco frente al fondo brillante) -->
                 <div class="carousel-caption text-start d-flex flex-column justify-content-center"
                      style="top:0; bottom:0; left:0; right:0; background: linear-gradient(120deg, rgba(10,10,10,.85) 0%, rgba(10,10,10,.35) 50%, rgba(10,10,10,.05) 100%); padding: 3rem 6vw;">
                     <div style="max-width: 680px;">

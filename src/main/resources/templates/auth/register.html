@@ -15,7 +15,20 @@
                     <p style="color: var(--snk-smoke); margin-top: 0.5rem;">Drops exclusivos, descuentos y acceso anticipado</p>
                 </div>
 
-                <form th:action="@{/register}" th:object="${user}" method="post">
+                <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+                <form th:action="@{/register}" th:object="${user}" method="post" enctype="multipart/form-data">
+
+                    <!-- Añadimos el campo para que suba su foto -->
+                    <div class="snk-mb-3 text-center">
+                        <label class="snk-form-label" style="display:block;">Foto de perfil</label>
+                        <div style="width: 80px; height: 80px; border-radius: 50%; background: #222; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid var(--snk-border);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-person-fill text-secondary" viewBox="0 0 16 16">
+                              <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                            </svg>
+                        </div>
+                        <input type="file" name="photoFile" accept="image/*" class="form-control form-control-sm" style="max-width: 250px; margin: 0 auto; background: var(--snk-dark); color: #fff; border-color: var(--snk-border);">
+                    </div>
 
                     <div class="snk-mb-3">
                         <label class="snk-form-label">Nombre completo *</label>
