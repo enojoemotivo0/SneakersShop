@@ -26,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 @Controller
 @RequestMapping("/orders")
 @RequiredArgsConstructor
+// Gestiona historial de pedidos, detalle y descarga de factura.
 public class OrderController {
 
     private final OrderService orderService;
@@ -34,12 +35,15 @@ public class OrderController {
     private final CategoryService categoryService;
     private final PdfService pdfService;
 
+    // Disponible en todas las vistas: contador de items en carrito.
     @ModelAttribute("cartCount")
     public int cartCount() { return cartService.getTotalItems(); }
 
+    // Disponible en todas las vistas: categorias para navegacion.
     @ModelAttribute("allCategories")
     public Object allCategories() { return categoryService.findAll(); }
 
+    // Lista los pedidos del usuario autenticado.
     @GetMapping
     public String myOrders(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         User user = userService.findByEmail(userDetails.getUsername());
@@ -48,6 +52,7 @@ public class OrderController {
         return "user/orders";
     }
 
+    // Muestra el detalle de un pedido si el usuario tiene permisos.
     @GetMapping("/{id}")
     public String detail(@PathVariable Long id,
                          @RequestParam(required = false) Boolean confirmed,
@@ -64,13 +69,15 @@ public class OrderController {
         model.addAttribute("pageTitle", "Pedido " + order.getOrderNumber() + " — SNIKERS");
         return "user/order-detail";
     }
+
+    // Genera y devuelve la factura PDF del pedido cuando el usuario esta autorizado.
     @GetMapping("/{id}/invoice")
     public ResponseEntity<byte[]> downloadInvoice(@PathVariable Long id,
                                                   @AuthenticationPrincipal UserDetails userDetails) {
         Order order = orderService.findById(id);
         User user = userService.findByEmail(userDetails.getUsername());
         
-        // Solo el dueÃ±o o un admin pueden descargar la factura
+        // Solo el dueno o un admin pueden descargar la factura.
         if (!order.getUser().getId().equals(user.getId()) && user.getRole() != User.Role.ADMINISTRADOR) {
             return ResponseEntity.status(403).build();
         }

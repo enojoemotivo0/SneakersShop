@@ -5,8 +5,10 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
+// Manejador global de excepciones para devolver una vista de error amigable.
 public class GlobalExceptionHandler {
 
+    // Errores de recurso/parametro invalido: se muestran como no encontrado.
     @ExceptionHandler(IllegalArgumentException.class)
     public String handleIllegalArgument(IllegalArgumentException ex, Model model) {
         model.addAttribute("errorCode", 404);
@@ -15,6 +17,7 @@ public class GlobalExceptionHandler {
         return "error";
     }
 
+    // Errores de estado de negocio: operacion no permitida.
     @ExceptionHandler(IllegalStateException.class)
     public String handleIllegalState(IllegalStateException ex, Model model) {
         model.addAttribute("errorCode", 400);
@@ -23,6 +26,7 @@ public class GlobalExceptionHandler {
         return "error";
     }
 
+    // Fallback para cualquier error no controlado.
     @ExceptionHandler(Exception.class)
     public String handleGeneric(Exception ex, Model model) {
         model.addAttribute("errorCode", 500);
