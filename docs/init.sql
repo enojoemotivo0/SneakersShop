@@ -1,14 +1,27 @@
 -- ============================================================
 -- SNIKERS SHOP — init.sql
--- Creación de base de datos y estructura de tablas
+-- Creación de base de datos, usuario de aplicación y tablas
 -- Motor: MySQL 8.0 · Columnas en español (igual que Hibernate)
 -- Autor: Proyecto Transversal Final · 2º DAM/DAW
--- Ejecutar ANTES de data.sql
+-- Ejecutar ANTES de data.sql  (requiere acceso como root)
 -- ============================================================
 
 CREATE DATABASE IF NOT EXISTS tienda
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
+
+-- ============================================================
+-- Usuario dedicado para la aplicación
+-- Se usa en lugar de root para limitar el daño en caso de ataque
+-- ============================================================
+CREATE USER IF NOT EXISTS 'snikers_user'@'localhost' IDENTIFIED BY 'Snikers2025!';
+
+-- Solo permisos sobre la base de datos del proyecto
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX, REFERENCES
+    ON tienda.*
+    TO 'snikers_user'@'localhost';
+
+FLUSH PRIVILEGES;
 
 USE tienda;
 
